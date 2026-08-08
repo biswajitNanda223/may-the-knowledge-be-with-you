@@ -39,7 +39,13 @@ Full stack in containers:
 npm run docker:up
 ```
 
-Open `http://localhost:8080`. Compose defaults to mock agent. Set a rotated `GOOGLE_GENAI_API_KEY` and `AGENT_STRATEGY=adk` to use Gemini.
+Open `http://localhost:8080`. Set a rotated `GOOGLE_API_KEY` and `AGENT_STRATEGY=adk` to use Gemini.
+
+Fastify API documentation:
+
+- Swagger UI: `http://localhost:3000/docs`
+- OpenAPI JSON: `http://localhost:3000/docs/json`
+- OpenAPI YAML: `http://localhost:3000/docs/yaml`
 
 ## Source priority
 
@@ -52,7 +58,7 @@ Repository includes a real dotenvx-encrypted `.env`. Decryption key lives only i
 team rotation flow:
 
 ```bash
-npx dotenvx set GOOGLE_GENAI_API_KEY "replacement-key"
+npx dotenvx set GOOGLE_API_KEY "replacement-key"
 git add .env
 ```
 

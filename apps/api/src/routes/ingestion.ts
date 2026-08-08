@@ -9,7 +9,7 @@ import { config } from '../config.js';
 import { importOntology } from '../services/ontology-importer.js';
 export const ingestionRoutes: FastifyPluginAsync = async app => {
   await app.register(multipart, { limits: { files: 1, fileSize: config.UPLOAD_MAX_BYTES } });
-  app.post('/files', async (req, reply) => {
+  app.post('/files', { schema: { tags: ['Ingestion'], summary: 'Upload one XLSX ontology or stage one TXT source', consumes: ['multipart/form-data'] } }, async (req, reply) => {
     const part = await req.file(); if (!part) return reply.code(400).send({ message: 'File required' });
     const ext = extname(part.filename).toLowerCase(); if (!['.xlsx', '.txt'].includes(ext)) return reply.code(415).send({ message: 'Only .xlsx and .txt accepted' });
     const dir = join(process.cwd(), 'data', 'uploads'); await mkdir(dir, { recursive: true }); const path = join(dir, `${randomUUID()}${ext}`);

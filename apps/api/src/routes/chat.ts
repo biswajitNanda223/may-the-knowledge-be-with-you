@@ -9,7 +9,7 @@ import { AuditService } from '../services/audit-service.js';
 const bodySchema = z.object({ question: z.string().trim().min(2).max(2000), conversationId: z.string().uuid().optional() });
 export const chatRoutes: FastifyPluginAsync = async app => {
   const graph = new GraphService(); const agent = createAgentStrategy(); const audit = new AuditService();
-  app.post('/', async (req, reply) => {
+  app.post('/', { schema: { tags: ['Chat'], summary: 'Stream answer tokens and exact Neo4j evidence over SSE', body: { type: 'object', required: ['question'], properties: { question: { type: 'string', minLength: 2, maxLength: 2000 }, conversationId: { type: 'string', format: 'uuid' } } }, response: { 200: { description: 'SSE events: trace, token, complete, or error', type: 'string' } } } }, async (req, reply) => {
     const input = bodySchema.parse(req.body); const conversationId = input.conversationId ?? randomUUID(); const traceId = randomUUID();
     const traceAdk = config.AGENT_STRATEGY === 'adk';
     if(traceAdk) adkTelemetry.start({traceId,conversationId,model:config.GEMINI_MODEL,questionChars:input.question.length});
