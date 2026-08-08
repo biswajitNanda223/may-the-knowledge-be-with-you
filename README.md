@@ -16,9 +16,8 @@ Production-oriented enterprise ontology experience: React + TypeScript, Fastify 
 Requirements: Node 22+, npm 10+, Docker.
 
 ```bash
-cp .env.example .env
 npm install
-docker compose up -d neo4j
+npm run env:run -- docker compose up -d neo4j
 npm run seed
 npm run dev
 ```
@@ -28,7 +27,7 @@ Open `http://localhost:5173`. Local Neo4j Browser: `http://localhost:7474`. Defa
 Full stack in containers:
 
 ```bash
-docker compose up --build
+npm run docker:up
 ```
 
 Open `http://localhost:8080`. Compose defaults to mock agent. Set a rotated `GOOGLE_GENAI_API_KEY` and `AGENT_STRATEGY=adk` to use Gemini.
@@ -39,15 +38,18 @@ Open `http://localhost:8080`. Compose defaults to mock agent. Set a rotated `GOO
 
 ## Secrets and dotenvx
 
-Never commit plaintext keys. `.env` and `.env.keys` are ignored. Safe team flow:
+Repository includes a real dotenvx-encrypted `.env`. Decryption key lives only in
+`.env.keys`, which is ignored. Never commit plaintext keys or `.env.keys`. Safe
+team rotation flow:
 
 ```bash
 npx dotenvx set GOOGLE_GENAI_API_KEY "replacement-key"
-npx dotenvx encrypt
 git add .env
 ```
 
-Commit only encrypted values; store `DOTENV_PRIVATE_KEY` in CI/cloud secret manager. Key posted in project request is compromised and must be revoked/rotated before use.
+Commit only encrypted values; store `DOTENV_PRIVATE_KEY` in CI/cloud secret manager.
+Team members need that private key to run encrypted configuration. Key posted in
+project request is compromised and must be revoked/rotated before use.
 
 ## Neo4j Aura Free
 
