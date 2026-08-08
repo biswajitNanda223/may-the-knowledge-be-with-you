@@ -1,8 +1,9 @@
-type AdkEvent = { content?: { parts?: Array<{ text?: string }> } };
+type AdkEvent = { content?: { parts?: Array<{ text?: string }> }; errorMessage?: string };
 
 export async function* streamAdkText(events: AsyncIterable<AdkEvent>) {
   let emitted = false;
   for await (const event of events) {
+    if (event.errorMessage) throw new Error(event.errorMessage);
     for (const part of event.content?.parts ?? []) {
       if (part.text) {
         emitted = true;

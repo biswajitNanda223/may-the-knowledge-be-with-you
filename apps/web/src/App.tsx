@@ -3,13 +3,14 @@ import { ChatPage } from './pages/ChatPage';
 import { ExplorerPage } from './pages/ExplorerPage';
 import { OperationsPage } from './pages/OperationsPage';
 import { TelemetryPage } from './pages/TelemetryPage';
+import { Icon, type IconName } from './components/Icon';
 
 const pages = { '/': ChatPage, '/explorer': ExplorerPage, '/operations': OperationsPage, '/telemetry': TelemetryPage } as const;
 const navigation = [
-  ['/', 'Chat + Evidence'],
-  ['/explorer', 'Graph Explorer'],
-  ['/operations', 'Architecture'],
-  ['/telemetry', 'ADK Telemetry']
+  ['/', 'Ask', 'ask'],
+  ['/explorer', 'Knowledge map', 'map'],
+  ['/operations', 'Sources', 'source'],
+  ['/telemetry', 'Activity', 'activity']
 ] as const;
 
 export default function App() {
@@ -25,13 +26,13 @@ export default function App() {
   const Page = pages[path] ?? ChatPage;
   return <div className="app-shell">
     <header className="app-header">
-      <a className="brand" href="/" onClick={go('/')} aria-label="ARMY home">
-        <span className="brand-mark">A</span><span><b>ARMY</b><small>Enterprise Knowledge</small></span>
+      <a className="brand" href="/" onClick={go('/')} aria-label="Knowledge Way home">
+        <span className="brand-mark"><img src="/knowledge-way-logo.png" alt="" /></span><span><b>Knowledge Way</b><small>Enterprise intelligence</small></span>
       </a>
       <nav aria-label="Primary navigation">
-        {navigation.map(([href, label], index) => <a key={href} className={path === href ? 'active' : ''} href={href} onClick={go(href)}><span>0{index + 1}</span>{label}</a>)}
+        {navigation.map(([href, label, icon]) => <a key={href} className={path === href ? 'active' : ''} href={href} onClick={go(href)}><Icon name={icon as IconName}/>{label}</a>)}
       </nav>
-      <span className="status"><i /> System online</span>
+      <span className="workspace-badge">Enterprise workspace</span>
     </header>
     <Page />
   </div>;

@@ -9,6 +9,7 @@ sequenceDiagram
   autonumber
   actor User
   participant UI as React ChatPage
+  participant Canvas as GraphCanvas
   participant API as Fastify chat route
   participant Graph as GraphService
   participant Neo4j
@@ -28,6 +29,7 @@ sequenceDiagram
   API->>Audit: Persist STARTED with evidence IDs
   Audit->>PostgreSQL: INSERT conversation and graph trace
   API-->>UI: SSE trace
+  UI->>Canvas: Render retrieved evidence
   API->>Telemetry: start + evidence counts
   API->>ADK: stream(question, evidence)
   ADK->>Gemini: Grounded generation
@@ -36,6 +38,9 @@ sequenceDiagram
     ADK-->>API: Token chunk
     API->>Telemetry: chunk count
     API-->>UI: SSE token
+    UI->>UI: Extract valid [node-id] citations
+    UI->>UI: Compute shortest evidence route with BFS
+    UI->>Canvas: Animate current route
   end
   API->>Telemetry: complete
   API->>Audit: Mark COMPLETED

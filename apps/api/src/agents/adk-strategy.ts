@@ -1,4 +1,4 @@
-import { InMemoryRunner, LlmAgent } from '@google/adk';
+import { InMemoryRunner, LlmAgent, StreamingMode } from '@google/adk';
 import type { AgentInput, AgentStrategy } from './strategy.js';
 import { streamAdkText } from './adk-event-stream.js';
 
@@ -10,9 +10,19 @@ export class AdkAgentStrategy implements AgentStrategy {
   async *stream(input: AgentInput) {
     const runner = new InMemoryRunner({ agent: this.agent, appName: 'mtkbwy' });
     const userId = 'web-user';
-    await runner.sessionService.createSession({ appName: 'mtkbwy', userId, sessionId: input.conversationId });
     const evidence = JSON.stringify({ nodes: input.evidence.nodes, edges: input.evidence.edges });
-    const events = runner.runAsync({ userId, sessionId: input.conversationId, newMessage: { role: 'user', parts: [{ text: `Question: ${input.question}\nNeo4j evidence: ${evidence}` }] } });
-    yield* streamAdkText(events);
+    const run = async function* (sessionId: string, streamingMode: StreamingMode) {
+      await runner.sessionService.createSession({ appName: 'mtkbwy', userId, sessionId });
+      const events = runner.runAsync({ userId, sessionId, runConfig: { streamingMode }, newMessage: { role: 'user', parts: [{ text: `Question: ${input.question}\nNeo4j evidence: ${evidence}` }] } });
+      for await (const text of streamAdkText(events)) {
+        if (streamingMode === StreamingMode.SSE) yield text;
+        else for (const chunk of text.match(/\S+\s*/g) ?? [text]) yield chunk;
+      }
+    };
+    try { yield* run(input.conversationId, StreamingMode.SSE); }
+    catch (error) {
+      if (!(error instanceof Error) || !error.message.startsWith('ADK model returned no text')) throw error;
+      yield* run(`${input.conversationId}-retry`, StreamingMode.NONE);
+    }
   }
 }

@@ -1,5 +1,63 @@
 # Low-level design
 
+## Scope and implementation status
+
+This document describes deployed code, not an aspirational agent workflow. Current graph retrieval happens before Gemini. Current animated answer path is derived in the browser after Gemini emits cited node IDs. It is a shortest-path visualization over retrieved evidence; it is not Gemini chain-of-thought.
+
+## Chat execution sequence
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor User
+  participant UI as ChatPage
+  participant Route as POST /v1/chat
+  participant Graph as GraphService
+  participant Neo4j
+  participant Audit as AuditService
+  participant ADK as AdkAgentStrategy
+  participant Gemini
+  participant Canvas as GraphCanvas
+
+  User->>UI: Submit question
+  UI->>Route: question, conversationId?
+  Route->>Graph: retrieve(question)
+  Graph->>Graph: tokenize and bound terms to 12
+  Graph->>Neo4j: keyword-neighborhood.v1
+  Neo4j-->>Graph: up to 60 node/relationship rows
+  Graph-->>Route: Evidence
+  Route->>Audit: persist STARTED + evidence IDs
+  Route-->>UI: SSE trace(Evidence)
+  UI->>Canvas: render retrieved graph
+  Route->>ADK: question + serialized Evidence
+  ADK->>Gemini: grounded generation request
+  loop streamed output
+    Gemini-->>ADK: ADK event
+    ADK-->>Route: text chunk
+    Route-->>UI: SSE token
+    UI->>UI: extract citations [node-id]
+    UI->>UI: BFS from question matches to cited nodes
+    UI->>Canvas: animate evidence paths
+  end
+  Route-->>UI: SSE complete
+  Route->>Audit: mark COMPLETED
+```
+
+### Ordering guarantee
+
+`trace` is emitted before first `token`. Frontend can therefore render evidence before model output arrives. Citation-dependent animation begins only after a streamed answer contains IDs that exist in received evidence.
+
+### Current path semantics
+
+```text
+candidate starts = top 3 retrieved nodes ranked by question-term matches
+targets          = first 4 valid [node-id] citations in streamed answer
+path             = shortest undirected BFS route from any start to each target
+animation        = node, edge, node order for every discovered route
+```
+
+This route explains graph connectivity between question context and cited evidence. It does not expose or approximate hidden model reasoning.
+
 ## Backend modules
 
 ```mermaid
@@ -52,12 +110,116 @@ classDiagram
   class GraphEdge { +string id +string source +string target +string type +properties }
   class GraphSlice { +GraphNode[] nodes +GraphEdge[] edges +string nextCursor }
   class Evidence { +GraphNode[] nodes +GraphEdge[] edges +string cypherId +number elapsedMs }
+  class EvidencePath { +string id +string[] elementIds +string targetNodeId }
   class AgentRun { +string traceId +string conversationId +string model +RunStatus status +number evidenceNodes +number evidenceEdges +number outputChunks +number outputChars +number durationMs }
   GraphSlice o-- GraphNode
   GraphSlice o-- GraphEdge
   Evidence o-- GraphNode
   Evidence o-- GraphEdge
 ```
+
+### Transport types
+
+```ts
+type ChatRequest = {
+  question: string;          // trimmed, 2..2000 characters
+  conversationId?: string;  // UUID
+};
+
+type TraceEvent = Evidence & {
+  traceId: string;
+  conversationId: string;
+};
+
+type TokenEvent = { token: string };
+type CompleteEvent = { traceId: string; conversationId: string };
+type ErrorEvent = { message: string; traceId: string };
+```
+
+SSE frame format:
+
+```text
+event: <trace|token|complete|error>
+data: <single-line JSON>
+
+```
+
+## Retrieval implementation
+
+`GraphService.retrieve` performs deterministic, bounded retrieval:
+
+1. Lowercase question.
+2. Split on non-identifier characters.
+3. Keep tokens longer than two characters.
+4. Keep maximum 12 terms.
+5. Match nodes where `name`, `description`, or `id` contains any term.
+6. Limit seed nodes to 12.
+7. Expand one undirected hop.
+8. Limit result rows to 60.
+9. Deduplicate nodes and relationships by stable ID.
+
+Cypher values are parameters. Question text never becomes executable Cypher.
+
+Complexity bounds:
+
+| Operation | Bound |
+|---|---:|
+| Query terms | 12 |
+| Matching seed nodes | 12 |
+| Returned rows | 60 |
+| Browser path targets | 4 |
+| Browser candidate starts | 3 |
+| Path search | `O(V + E)` per start/target pair |
+
+## Frontend chat state
+
+| State | Owner | Meaning |
+|---|---|---|
+| `question` | `ChatPage` | Composer draft; cleared immediately after accepted submit |
+| `submittedQuestion` | `ChatPage` | Immutable question for active response |
+| `answer` | `ChatPage` | Accumulated streamed output |
+| `nodes`, `edges` | `ChatPage` | Exact server `trace` evidence |
+| `busy` | `ChatPage` | Prevents concurrent submission |
+| `citedNodeIds` | derived | Valid answer citations present in evidence |
+| `evidenceRoutes` | derived | BFS paths for visualization |
+| `evidenceMode` | `ChatPage` | normal, expanded, or minimized |
+
+Token rendering is coalesced through `requestAnimationFrame` to avoid one React render per network chunk.
+
+## GraphCanvas rules
+
+- Reject edges whose endpoints are absent.
+- Reject self-loops in this view.
+- Deduplicate parallel edges with identical source, target, and type.
+- Hide arrowheads and labels on background relationships.
+- Show direction and label only for active answer-path edges.
+- Fade unrelated elements during route playback.
+- Run each evidence route separately; never flatten multiple paths into one false route.
+- Resize canvas without automatically refitting on every observer event.
+- Fit after layout completion and when user requests fit/fullscreen.
+
+## Exact server-owned path evolution
+
+For compliance-grade provenance, move path selection into backend retrieval and extend `Evidence`:
+
+```ts
+type EvidencePath = {
+  id: string;
+  elementIds: string[];      // alternating node and relationship IDs
+  targetNodeId: string;
+  retrievalReason: 'keyword-neighborhood' | 'explicit-traversal';
+};
+
+type Evidence = {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+  paths: EvidencePath[];
+  cypherId: string;
+  elapsedMs: number;
+};
+```
+
+Migration rule: backend returns `paths`; Gemini receives same paths; audit persists path IDs; frontend only animates returned `elementIds`. This removes browser heuristic divergence while still avoiding claims about model chain-of-thought.
 
 ## Normalized Neo4j model
 
