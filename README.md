@@ -27,6 +27,8 @@ npm run dev
 
 Open `http://localhost:5173`. Local Neo4j Browser: `http://localhost:7474`.
 Runtime configuration comes exclusively from the dotenvx-encrypted `.env`.
+Docker Compose receives ports, credentials, memory limits, origins, model settings,
+and service URLs from that same decrypted environment; Compose contains no local secrets.
 
 Full stack in containers:
 

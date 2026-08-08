@@ -9,12 +9,15 @@ COPY prisma prisma
 RUN npx prisma generate --schema prisma/schema.prisma
 RUN npm run build -w @mtkbwy/api
 FROM node:22-alpine
-ENV NODE_ENV=production
+ARG NODE_ENV
+ARG API_PORT
+ENV NODE_ENV=${NODE_ENV}
+ENV API_PORT=${API_PORT}
 WORKDIR /app
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/apps/api/package.json ./package.json
 COPY --from=build /app/apps/api/dist ./dist
 COPY --from=build /app/prisma ./prisma
 USER node
-EXPOSE 3000
+EXPOSE ${API_PORT}
 CMD ["node", "dist/server.js"]
