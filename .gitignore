@@ -3,7 +3,6 @@ dist/
 coverage/
 .env.*.local
 .env.keys
-!.env.example
 *.log
 *.tsbuildinfo
 .DS_Store

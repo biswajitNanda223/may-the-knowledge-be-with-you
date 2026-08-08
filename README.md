@@ -22,7 +22,8 @@ npm run seed
 npm run dev
 ```
 
-Open `http://localhost:5173`. Local Neo4j Browser: `http://localhost:7474`. Default Docker password is development-only and matches `.env.example` after changing its placeholder.
+Open `http://localhost:5173`. Local Neo4j Browser: `http://localhost:7474`.
+Runtime configuration comes exclusively from the dotenvx-encrypted `.env`.
 
 Full stack in containers:
 
