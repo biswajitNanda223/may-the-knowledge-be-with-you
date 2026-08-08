@@ -18,6 +18,7 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/apps/api/package.json ./package.json
 COPY --from=build /app/apps/api/dist ./dist
 COPY --from=build /app/prisma ./prisma
+RUN mkdir -p /app/data/uploads && chown -R node:node /app/data
 USER node
 EXPOSE ${API_PORT}
 CMD ["node", "dist/server.js"]

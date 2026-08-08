@@ -1,5 +1,6 @@
 import { InMemoryRunner, LlmAgent } from '@google/adk';
 import type { AgentInput, AgentStrategy } from './strategy.js';
+import { streamAdkText } from './adk-event-stream.js';
 
 export class AdkAgentStrategy implements AgentStrategy {
   private agent: LlmAgent;
@@ -12,7 +13,6 @@ export class AdkAgentStrategy implements AgentStrategy {
     await runner.sessionService.createSession({ appName: 'mtkbwy', userId, sessionId: input.conversationId });
     const evidence = JSON.stringify({ nodes: input.evidence.nodes, edges: input.evidence.edges });
     const events = runner.runAsync({ userId, sessionId: input.conversationId, newMessage: { role: 'user', parts: [{ text: `Question: ${input.question}\nNeo4j evidence: ${evidence}` }] } });
-    for await (const event of events) for (const part of event.content?.parts ?? []) if ('text' in part && part.text) yield part.text;
+    yield* streamAdkText(events);
   }
 }
-
