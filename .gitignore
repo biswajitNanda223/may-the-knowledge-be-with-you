@@ -6,9 +6,9 @@ coverage/
 .env.keys
 !.env.example
 *.log
+*.tsbuildinfo
 .DS_Store
 .idea/
 .vscode/
 data/uploads/*
 !data/uploads/.gitkeep
-
