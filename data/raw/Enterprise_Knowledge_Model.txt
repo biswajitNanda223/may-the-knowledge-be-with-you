@@ -1,0 +1,4996 @@
+
+
+# Enterprise Knowledge Model (EKM)
+**Version:** 1.0 (Draft)
+
+---
+
+# 1. Executive Summary
+
+## 1.1 Purpose
+
+The Enterprise Knowledge Model (EKM) is the authoritative representation of how capital projects are planned, approved, engineered, procured, executed, monitored and governed across the enterprise.
+
+The objective of this document is not merely to document business processes, but to establish a common knowledge model that can be used by:
+
+- Business Users
+- Project Teams
+- PMO
+- Digital & Analytics Teams
+- AI Applications
+- Knowledge Graphs
+- Enterprise Dashboards
+- Future Automation Initiatives
+
+This document intentionally separates business concepts from system implementation while preserving the relationships between them.
+
+---
+
+## 1.2 Scope
+
+This document covers the complete lifecycle of a capital project beginning from project initiation through construction progress monitoring.
+
+Domains included:
+
+- Project Initiation
+- CAPEX Approval
+- Planning
+- Pre-Construction
+- Engineering
+- Procurement
+- Construction
+- Progress Measurement
+- Supporting Governance Domains
+
+The document also establishes the relationships between these domains and the enterprise applications supporting them.
+
+---
+
+## 1.3 Objectives
+
+The Enterprise Knowledge Model aims to:
+
+- Standardize enterprise terminology
+- Establish common business entities
+- Define relationships between entities
+- Capture business rules
+- Define ownership
+- Identify system of record
+- Enable enterprise-wide reasoning
+- Support AI-assisted decision making
+
+---
+
+## 1.4 Guiding Principles
+
+### Business First
+
+Business concepts should exist independent of technology.
+
+Systems implement business processes; they do not define them.
+
+---
+
+### Single Source of Truth
+
+Every business object should have one primary system of record.
+
+Derived systems should consume rather than redefine information.
+
+---
+
+### Lifecycle Driven
+
+Every entity participates in one or more lifecycle stages.
+
+Relationships between lifecycle stages are explicitly modeled.
+
+---
+
+### Traceability
+
+Every major decision should be traceable back to its originating business process.
+
+Examples:
+
+- Construction Delay
+- Procurement Delay
+- Budget Overrun
+- Engineering Delay
+
+should all be explainable through upstream business events.
+
+---
+
+# 2. Enterprise Overview
+
+## 2.1 Enterprise Project Lifecycle
+
+The enterprise executes projects through the following lifecycle.
+
+```text
+Business Opportunity
+        │
+        ▼
+Project Initiation
+        │
+        ▼
+CAPEX Approval (NFA)
+        │
+        ▼
+Planning
+        │
+        ▼
+Pre-Construction
+        │
+        ▼
+Engineering
+        │
+        ▼
+Procurement
+        │
+        ▼
+Construction
+        │
+        ▼
+Progress Measurement
+        │
+        ▼
+Commissioning
+        │
+        ▼
+Project Closeout
+```
+
+Although represented sequentially, several domains execute concurrently after project approval.
+
+Examples:
+
+- Engineering and Procurement overlap.
+- Procurement and Construction overlap.
+- Progress Measurement spans the complete execution lifecycle.
+
+---
+
+## 2.2 Enterprise Operating Philosophy
+
+The enterprise manages projects through standardized governance while allowing each Business Unit (BU) to customize execution below agreed enterprise standards.
+
+Examples:
+
+- CAPEX Approval follows enterprise standards.
+- WBS hierarchy is standardized up to Level 3.
+- Engineering package structure is standardized.
+- Procurement governance follows enterprise policies.
+
+Below these levels, execution can vary based on business requirements.
+
+---
+
+## 2.3 Primary Business Dimensions
+
+Projects are governed through five primary dimensions.
+
+### Financial
+
+Examples:
+
+- Approved CAPEX
+- Cash Flow
+- Budget
+- Commitment
+- Financial Progress
+
+---
+
+### Schedule
+
+Examples:
+
+- Baseline Schedule
+- Critical Path
+- Float
+- Milestones
+- Planned Completion
+
+---
+
+### Physical
+
+Examples:
+
+- Activity Progress
+- Construction Progress
+- Productivity
+- Package Completion
+
+---
+
+### Engineering
+
+Examples:
+
+- Documents
+- Revisions
+- MDL
+- RFC/GFC Drawings
+
+---
+
+### Governance
+
+Examples:
+
+- NFA
+- Commercial NFA
+- TOA
+- Approvals
+- Reviews
+
+---
+
+# 3. Enterprise Domain Map
+
+The enterprise consists of interconnected business domains.
+
+## Core Lifecycle Domains
+
+- Project Initiation
+- Planning
+- Pre-Construction
+- Engineering
+- Procurement
+- Construction
+- Progress Measurement
+
+These represent the primary execution lifecycle.
+
+---
+
+## Supporting Domains
+
+The following domains support the core lifecycle.
+
+- Finance
+- Quality
+- Safety
+- Risk Management
+- Material Management
+- Vendor Management
+- Commissioning
+
+These domains interact continuously with the execution lifecycle.
+
+---
+
+## Enterprise Applications
+
+The lifecycle is supported through multiple enterprise systems.
+
+| Domain | Primary System |
+|----------|----------------|
+| CAPEX Approval | CapExpert |
+| Planning | Primavera P6 |
+| Pre-Construction | PreCon360 |
+| Engineering | Autodesk |
+| Procurement | Ariba |
+| ERP | SAP |
+| Reporting | Enterprise Dashboards / Data Lake |
+
+---
+
+## Enterprise Governance
+
+Governance exists across every lifecycle stage.
+
+Examples include:
+
+- Delegation of Authority (TOA)
+- CAPEX Approval
+- Commercial Approval
+- Baseline Approval
+- Engineering Review
+- Procurement Review
+- Project Review
+- Executive Review
+
+---
+
+# 4. Enterprise Domain Relationships
+
+The following illustrates the dependencies between domains.
+
+```text
+Project Initiation
+        │
+        ▼
+Planning
+        │
+        ▼
+Pre-Construction
+        │
+        ▼
+Engineering
+        │
+        ▼
+Procurement
+        │
+        ▼
+Construction
+        │
+        ▼
+Progress Measurement
+```
+
+However, actual execution includes multiple parallel interactions.
+
+Example:
+
+Engineering
+
+↓
+
+RFC Drawings
+
+↓
+
+Construction
+
+↓
+
+Progress
+
+Meanwhile
+
+Procurement
+
+↓
+
+Material Delivery
+
+↓
+
+Construction
+
+↓
+
+Progress
+
+Similarly,
+
+PreCon360
+
+↓
+
+Statutory Approvals
+
+↓
+
+Construction Readiness
+
+↓
+
+Execution
+
+These interactions form the foundation for enterprise reasoning.
+
+---
+
+# 5. Core Enterprise Concepts
+
+The following concepts appear throughout the enterprise and are reused across domains.
+
+## Project
+
+The fundamental business investment approved through a CAPEX NFA.
+
+One Project typically corresponds to one original CAPEX NFA.
+
+Projects may subsequently undergo amendments.
+
+---
+
+## Package
+
+The primary execution boundary of a project.
+
+Engineering
+
+Procurement
+
+Construction
+
+Vendor Management
+
+Progress
+
+are all managed package-wise.
+
+---
+
+## Activity
+
+The primary execution object.
+
+Activities are:
+
+- Planned
+- Scheduled
+- Executed
+- Progressed
+- Reviewed
+
+Construction progress ultimately converges at the activity level.
+
+---
+
+## Baseline
+
+A baseline represents an approved reference against which future performance is measured.
+
+Examples include:
+
+- Financial Baseline
+- Schedule Baseline
+- Pre-Construction Baseline
+- Engineering Baseline (MDL)
+- Annual Operating Plan
+
+---
+
+## Document
+
+Documents govern engineering execution.
+
+Every engineering deliverable progresses through controlled revision and approval before becoming available for construction.
+
+---
+
+## Vendor
+
+Vendors participate in engineering, procurement, supply and construction depending upon the adopted packaging strategy.
+
+Vendor performance is continuously monitored throughout project execution.
+
+---
+
+# 6. Project Initiation
+
+## 6.1 Purpose
+
+Project Initiation is the process through which a business opportunity is formally transformed into an approved capital investment proposal. The primary outcome of this phase is an approved Capital Expenditure (CAPEX) Note for Approval (NFA), which authorizes the organization to initiate the project.
+
+Project Initiation establishes the business, financial, and execution baseline upon which all downstream activities depend.
+
+---
+
+## 6.2 Objectives
+
+The objectives of Project Initiation are to:
+
+- Identify and justify a capital investment.
+- Obtain organizational approval for the investment.
+- Establish the approved CAPEX budget.
+- Define high-level project scope and objectives.
+- Capture the baseline financial assumptions.
+- Define the preliminary execution timeline.
+- Capture the baseline CAPEX distribution.
+- Establish the initial governance for project execution.
+
+---
+
+## 6.3 Process Overview
+
+```text
+Business Opportunity
+        │
+        ▼
+Project Proposal
+        │
+        ▼
+CAPEX NFA Preparation
+        │
+        ▼
+Supporting Documents
+        │
+        ▼
+Main Approval Flow
+        │
+        ├──────────────┐
+        ▼              │
+Top Approval Flow      │
+(If Applicable)        │
+        ▼              │
+Approval Complete ◄────┘
+        │
+        ▼
+Project Approved
+        │
+        ▼
+Planning Phase
+```
+
+---
+
+## 6.4 Business Trigger
+
+The initiation process begins when a business identifies a potential capital investment.
+
+The source of the opportunity varies by Business Unit and may originate from:
+
+- Business Development
+- Operations
+- Expansion Strategy
+- Capacity Enhancement
+- Regulatory Requirements
+- Technology Upgrade
+- Strategic Investment
+
+The identification mechanism is business-specific and is outside the scope of enterprise standardization.
+
+---
+
+## 6.5 Primary Business Artifact
+
+The primary artifact of this phase is the **CAPEX Note for Approval (NFA)**.
+
+The CAPEX NFA is the enterprise's official investment approval document and serves as the governing approval for project initiation.
+
+A project is considered formally approved only after the CAPEX NFA has completed the prescribed approval workflow.
+
+---
+
+## 6.6 Major Information Captured
+
+The CAPEX NFA captures:
+
+### Project Information
+
+- Project Name
+- Business Unit
+- Project Purpose
+- Business Objective
+- Project Description
+- Project Owner
+- Planned Start Date
+- Planned Completion Date
+- Major Milestones
+
+---
+
+### Financial Information
+
+- Approved CAPEX
+- Cash Flow
+- Financial IRR
+- Debt-Equity Ratio
+- Investment Returns
+- Other financial indicators applicable to the business
+
+These values establish the initial financial baseline for the project.
+
+---
+
+### CAPEX Planning
+
+The enterprise captures a month-wise CAPEX plan for the complete project duration.
+
+The plan is classified into:
+
+- Hard Cost
+- Soft Cost
+- Land Cost
+- Contingency
+
+This represents the approved CAPEX expenditure timeline.
+
+---
+
+### CAPEX Breakdown
+
+The CAPEX is further decomposed into standardized levels.
+
+Enterprise standardization exists up to Level 3.
+
+Typical hierarchy:
+
+```text
+Project
+    │
+    ├── Hard
+    ├── Soft
+    ├── Land
+    └── Contingency
+```
+
+Each category is further divided into enterprise-standard components.
+
+Every CAPEX component maintains:
+
+- Basic Value
+- GST
+- Refundable GST
+- Non-Refundable GST
+
+This structure forms the approved budget baseline.
+
+---
+
+## 6.7 CAPEX vs Cash Flow
+
+The enterprise distinguishes CAPEX from Cash Flow.
+
+### CAPEX
+
+Represents the actual capitalized investment attributable to the project.
+
+Refundable taxes are excluded.
+
+---
+
+### Cash Flow
+
+Represents the total cash movement associated with the project.
+
+Includes:
+
+- Refundable taxes
+- Advances
+- Actual vendor payments
+
+Although related, these concepts are independently planned and monitored.
+
+---
+
+## 6.8 Pre-Construction Baseline
+
+During project initiation, the initiator also captures the preliminary Pre-Construction Checklist.
+
+Examples include:
+
+- Land Acquisition
+- Statutory Approvals
+- Utility Availability
+- Site Readiness
+- Other business-specific readiness activities
+
+For each applicable item, the initiator records:
+
+- Applicability
+- Tentative Completion Date
+
+These values establish the initial Pre-Construction baseline and are subsequently consumed by PreCon360.
+
+---
+
+## 6.9 Approval Workflow
+
+The CAPEX NFA progresses through the enterprise approval workflow governed by the **Delegation of Authority (DOA/TOA)**.
+
+The approval path depends on:
+
+- Business Unit
+- CAPEX Value
+- Approval Matrix
+
+The approval workflow is standardized across the enterprise while allowing business-specific approval chains.
+
+---
+
+## 6.10 Main Approval Flow
+
+Every CAPEX NFA passes through the Main Approval Flow.
+
+This constitutes the mandatory enterprise approval process.
+
+The flow includes multiple approval stages determined by the Delegation of Authority.
+
+---
+
+## 6.11 Top Approval Flow
+
+Projects exceeding defined approval thresholds additionally enter a Top Approval Flow.
+
+This flow supplements, rather than replaces, the Main Approval Flow.
+
+Typical activities include:
+
+- Detailed scrutiny
+- Supporting document review
+- Executive summary preparation
+- Promoter review
+- Chairman approval
+
+The Top Approval Flow is coordinated by dedicated governance teams.
+
+---
+
+## 6.12 Supporting Documents
+
+The CAPEX NFA may contain multiple supporting documents.
+
+Examples include:
+
+- Financial Models
+- Technical Justification
+- Feasibility Reports
+- Supporting Calculations
+- Other business-specific annexures
+
+Additional supporting documents may be uploaded during the approval process.
+
+Previously submitted documents remain part of the approval history.
+
+---
+
+## 6.13 Project Approval
+
+A project becomes officially approved only after the CAPEX NFA is approved.
+
+Although business teams may begin preliminary preparation while approval is in progress, enterprise governance recognizes the project only after approval.
+
+Historically approved offline projects may exist but are treated as exceptions.
+
+---
+
+## 6.14 Business Rules
+
+### BR-001
+
+One CAPEX NFA generally represents one Project.
+
+Rare enterprise exceptions may combine multiple projects into a single NFA.
+
+---
+
+### BR-002
+
+Every project requires an approved CAPEX NFA.
+
+---
+
+### BR-003
+
+A Project belongs to exactly one owning Business Unit.
+
+Other Business Units may participate as stakeholders but ownership remains unique.
+
+---
+
+### BR-004
+
+Financial metrics approved during initiation become the baseline for future comparison.
+
+Changes occur only through formal amendment processes.
+
+---
+
+### BR-005
+
+Currency for enterprise CAPEX approval is maintained in INR.
+
+Foreign procurements are converted into INR for approval purposes.
+
+---
+
+### BR-006
+
+The Project Manager (or Chief Project Officer, depending on business governance) assumes ownership after project approval.
+
+---
+
+## 6.15 Amendment Process
+
+Approved projects may subsequently undergo amendments.
+
+Typical reasons include:
+
+- Scope Increase
+- Budget Enhancement
+- Timeline Extension
+
+These are governed through CAPEX Amendment NFAs.
+
+The amendment process establishes a new approval cycle while preserving the original investment approval.
+
+Current enterprise systems do not explicitly maintain parent-child relationships between original and amendment NFAs.
+
+This relationship must be inferred through business context.
+
+---
+
+## 6.16 Outputs
+
+The Project Initiation phase produces:
+
+- Approved Project
+- Approved CAPEX
+- Financial Baseline
+- CAPEX Baseline
+- Preliminary Milestones
+- Pre-Construction Baseline
+- Governance Ownership
+- Approved NFA
+- Supporting Documentation
+
+
+# 7. Planning
+
+## 7.1 Purpose
+
+The Planning domain transforms an approved project into an executable schedule. It establishes the project execution strategy, defines the Work Breakdown Structure (WBS), develops the baseline schedule, and creates the activity network against which project execution and progress are monitored.
+
+Planning provides the enterprise schedule baseline and acts as the central coordination layer between Engineering, Procurement, Construction, and Progress Measurement.
+
+---
+
+## 7.2 Objectives
+
+The Planning phase aims to:
+
+- Develop the enterprise project schedule.
+- Define the standardized Work Breakdown Structure (WBS).
+- Establish activity dependencies.
+- Create the approved schedule baseline.
+- Identify the Critical Path.
+- Assign project resources.
+- Enable project monitoring through Primavera.
+- Provide schedule data for dashboards and enterprise reporting.
+
+---
+
+## 7.3 Primary System
+
+**Primary System of Record**
+
+- Primavera P6
+
+Supporting Systems
+
+- PreCon360
+- Enterprise Data Lake
+- Enterprise Dashboards
+
+---
+
+## 7.4 Process Overview
+
+```text
+Approved Project
+        │
+        ▼
+Create Primavera Project
+        │
+        ▼
+Create WBS
+        │
+        ▼
+Create Activities
+        │
+        ▼
+Assign Logic
+        │
+        ▼
+Assign Resources
+        │
+        ▼
+Create Baseline
+        │
+        ▼
+Baseline Approval
+        │
+        ▼
+Execution Updates
+        │
+        ▼
+Schedule Monitoring
+```
+
+---
+
+# 7.5 Schedule Creation
+
+Following project approval, the Scheduler creates the project schedule within Primavera P6.
+
+The schedule serves as the enterprise execution plan and becomes the primary source for monitoring project progress.
+
+Each project maintains a dedicated Primavera schedule.
+
+---
+
+# 7.6 Work Breakdown Structure (WBS)
+
+The enterprise follows a partially standardized WBS.
+
+Standardization exists up to Level 2.
+
+Typical enterprise hierarchy:
+
+```text
+Project
+
+│
+
+├── Pre-Construction
+
+├── Engineering
+
+├── Procurement
+
+└── Construction
+```
+
+Beyond this level, individual Business Units extend the hierarchy according to project requirements.
+
+Historical SAP structures may not follow this standard; however, all new enterprise projects are expected to comply.
+
+---
+
+# 7.7 Activities
+
+Activities are the smallest operational planning units.
+
+Every activity captures:
+
+- Activity ID
+- Activity Name
+- Start Date
+- Finish Date
+- Duration
+- Calendar
+- Progress %
+- Predecessors
+- Successors
+- Activity Relationships
+
+Activities form the basis of execution, monitoring, productivity measurement, and progress reporting.
+
+---
+
+# 7.8 Calendars
+
+Each activity is assigned a project calendar that determines working and non-working periods.
+
+Calendars influence:
+
+- Duration
+- Schedule calculations
+- Forecast completion
+- Critical Path
+
+---
+
+# 7.9 Activity Logic
+
+Activities are connected using predecessor-successor relationships.
+
+The schedule network determines:
+
+- Execution order
+- Critical Path
+- Float
+- Forecast completion
+
+Activity sequencing is maintained within Primavera.
+
+Business-specific construction and engineering sequences are maintained separately and will be documented as enterprise knowledge assets.
+
+---
+
+# 7.10 Resources
+
+Activities may have multiple assigned resources.
+
+Typical resource categories include:
+
+- Labour
+- Machinery
+- Materials
+
+Resource assignments support:
+
+- Progress calculation
+- Productivity analysis
+- Resource planning
+
+---
+
+# 7.11 Progress Calculation
+
+Physical progress is primarily derived from Primavera activities.
+
+Progress is generally calculated using labour-unit based methodologies supported by Primavera.
+
+Certain activities continue to receive manual progress updates where automated measurement is not practical.
+
+---
+
+# 7.12 Baseline
+
+Once planning is completed, the project baseline is established.
+
+Although Primavera supports multiple baselines, the enterprise recognizes one approved baseline as the official reference.
+
+This baseline is used for:
+
+- Executive Reviews
+- Dashboards
+- Variance Analysis
+- Progress Measurement
+
+---
+
+# 7.13 Baseline Approval
+
+The baseline undergoes an approval workflow before becoming active.
+
+Typical approving bodies include:
+
+- Project Management Team
+- PMAT (Project Management Assurance Team)
+- CPMAT (Central Project Management Assurance Team)
+
+Approval governance varies by business while following enterprise principles.
+
+---
+
+# 7.14 Critical Path
+
+Critical Path is a primary planning construct.
+
+It represents the chain of activities that directly determine project completion.
+
+Management continuously reviews:
+
+- Critical Path
+- Total Float
+- Free Float
+
+These metrics support schedule risk assessment.
+
+---
+
+# 7.15 Schedule Updates
+
+Schedules are updated periodically throughout project execution.
+
+Typical inputs include:
+
+- Daily Progress Reports (DPR)
+- Weekly Progress Reports (WPR)
+- Site Updates
+- Engineering Progress
+- Construction Progress
+
+Update frequency varies by Business Unit, although weekly updates are the enterprise norm.
+
+---
+
+# 7.16 Planning Integration
+
+Planning interacts with multiple downstream domains.
+
+### Pre-Construction
+
+The Pre-Construction Checklist established during Project Initiation is expanded into executable activities.
+
+---
+
+### Engineering
+
+Engineering milestones and package schedules are managed within Primavera.
+
+---
+
+### Procurement
+
+Major procurement milestones are reflected within the project schedule.
+
+---
+
+### Construction
+
+Construction execution follows Primavera activities.
+
+Progress is reported against these activities.
+
+---
+
+### Progress Measurement
+
+Physical progress originates from Primavera activity completion.
+
+Enterprise dashboards consume schedule information from the Data Lake.
+
+---
+
+# 7.17 Dashboards
+
+Planning information feeds enterprise dashboards.
+
+Common planning KPIs include:
+
+- Planned Progress
+- Actual Progress
+- Schedule Variance
+- Critical Path
+- Total Float
+- Free Float
+- S-Curve
+- Baseline Variance
+
+---
+
+# 7.18 S-Curve
+
+The S-Curve compares:
+
+- Planned Progress
+- Actual Progress
+
+It serves as the primary visualization for monitoring schedule performance against the approved baseline.
+
+---
+
+# 7.19 Business Rules
+
+### BR-007
+
+Every approved project shall maintain a Primavera schedule.
+
+---
+
+### BR-008
+
+One approved baseline shall serve as the enterprise reference schedule.
+
+---
+
+### BR-009
+
+Activities shall maintain logical relationships through predecessor-successor links.
+
+---
+
+### BR-010
+
+Pre-Construction activities shall originate from the approved Pre-Construction Checklist.
+
+---
+
+### BR-011
+
+Activity progress forms the basis for enterprise physical progress reporting.
+
+---
+
+### BR-012
+
+Enterprise WBS standardization is mandatory up to the defined enterprise levels.
+
+Business Units may extend the hierarchy below standardized levels.
+
+---
+
+# 7.20 Outputs
+
+The Planning domain produces:
+
+- Primavera Schedule
+- WBS
+- Activity Network
+- Resource Plan
+- Schedule Baseline
+- Critical Path
+- Float Analysis
+- S-Curve
+- Planning KPIs
+
+These outputs drive Engineering, Procurement, Construction, and Progress Measurement throughout the project lifecycle.
+
+
+# 8. Pre-Construction
+
+## 8.1 Purpose
+
+The Pre-Construction domain governs all readiness activities that must be completed before major construction execution can commence. It ensures that statutory, land, utility, regulatory, and organizational prerequisites are tracked, managed, and completed in a controlled manner.
+
+Unlike Planning, which establishes the execution schedule, Pre-Construction focuses on **readiness**.
+
+---
+
+# 8.2 Objectives
+
+The objectives of Pre-Construction are to:
+
+- Track project readiness.
+- Monitor statutory approvals.
+- Monitor land acquisition.
+- Track regulatory dependencies.
+- Identify execution bottlenecks before construction.
+- Provide enterprise visibility into project readiness.
+
+---
+
+# 8.3 Primary System
+
+**Primary System of Record**
+
+- PreCon360
+
+Supporting Systems
+
+- Primavera P6
+- CapExpert
+- Autodesk
+- Enterprise Data Lake
+- Enterprise Dashboards
+
+---
+
+# 8.4 Process Overview
+
+```text
+Approved NFA
+        │
+        ▼
+Pre-Construction Baseline
+        │
+        ▼
+Activities imported into PreCon360
+        │
+        ▼
+Business updates progress
+        │
+        ▼
+Supporting documents uploaded
+        │
+        ▼
+Readiness Monitoring
+        │
+        ▼
+Construction Ready
+```
+
+---
+
+# 8.5 Relationship with Project Initiation
+
+During CAPEX approval, the project captures a preliminary Pre-Construction Checklist.
+
+This checklist forms the initial baseline.
+
+After project approval, the baseline is expanded into executable readiness activities within PreCon360.
+
+PreCon360 therefore represents the operational execution of the readiness plan defined during Project Initiation.
+
+---
+
+# 8.6 Standard Checklist
+
+The enterprise maintains a centrally governed library of Pre-Construction activities.
+
+Typical categories include:
+
+- Land Acquisition
+- Statutory Approvals
+- Utility Readiness
+- Environmental Clearances
+- Corporate Approvals
+- Other business-specific readiness activities
+
+Not every activity applies to every project.
+
+The Business selects applicable activities during project setup.
+
+---
+
+# 8.7 Activity Attributes
+
+Each Pre-Construction activity maintains:
+
+- Activity Name
+- Applicability
+- Planned Date
+- Forecast Date
+- Actual Completion Date
+- Current Status
+- Business POC
+- Pending With
+- Supporting Documents
+- Remarks
+
+Additional metadata is maintained depending on activity type.
+
+---
+
+# 8.8 Land Acquisition
+
+Land Acquisition activities additionally capture:
+
+- Required Land
+- Acquired Land
+- Balance Land
+
+These values provide enterprise visibility into land readiness.
+
+---
+
+# 8.9 Statutory Approvals
+
+Statutory Approvals are managed as structured approval hierarchies rather than a single checklist item.
+
+Typical hierarchy:
+
+```text
+Approval Category
+        │
+        ▼
+Approval
+        │
+        ▼
+Approval Steps
+```
+
+Each approval maintains its own lifecycle and progress.
+
+---
+
+# 8.10 Ownership
+
+Every activity has:
+
+### Business Owner
+
+Responsible for overall completion.
+
+---
+
+### Pending With
+
+Represents the team currently expected to take action.
+
+Examples include:
+
+- Legal
+- Corporate Affairs
+- Land Team
+- Other designated internal teams
+
+Only one internal team is considered the active owner at a given time.
+
+---
+
+# 8.11 Status Model
+
+Typical lifecycle:
+
+```text
+Not Started
+        │
+        ▼
+In Progress
+        │
+        ▼
+Completed
+```
+
+Completion is based on manual confirmation supported by documentary evidence.
+
+---
+
+# 8.12 Supporting Documents
+
+Every activity may contain supporting documents.
+
+Examples include:
+
+- Government approvals
+- Land records
+- Regulatory correspondence
+- Internal approvals
+
+Documents are managed through Autodesk, which serves as the enterprise document management platform.
+
+---
+
+# 8.13 Relationship with Primavera
+
+Pre-Construction activities are mirrored into Primavera.
+
+Planning establishes the schedule.
+
+PreCon360 manages execution-specific metadata not maintained within Primavera.
+
+Examples include:
+
+- Pending Team
+- Business Owner
+- Forecast Dates
+- Risks
+- Supporting Documentation
+
+The two systems remain synchronized conceptually while serving different operational purposes.
+
+---
+
+# 8.14 Dashboards
+
+Enterprise dashboards monitor:
+
+- Overall Readiness
+- Pending Activities
+- Delayed Activities
+- Forecast Variance
+- Land Acquisition Progress
+- Statutory Approval Progress
+- Readiness Percentage
+
+These dashboards are consumed during executive project reviews.
+
+---
+
+# 8.15 Completion Criteria
+
+Pre-Construction is considered complete when all applicable readiness activities have been completed.
+
+Activities marked as Not Applicable do not contribute to readiness.
+
+Completion represents organizational readiness rather than physical construction progress.
+
+---
+
+# 8.16 Business Rules
+
+### BR-013
+
+The enterprise checklist is centrally governed.
+
+---
+
+### BR-014
+
+Projects select only applicable activities.
+
+---
+
+### BR-015
+
+Each activity has exactly one current "Pending With" owner.
+
+---
+
+### BR-016
+
+Completion requires manual confirmation supported by documentary evidence.
+
+---
+
+### BR-017
+
+Land Acquisition maintains Required, Acquired and Balance values.
+
+---
+
+### BR-018
+
+Statutory approvals are decomposed into structured approval hierarchies.
+
+---
+
+# 8.17 Outputs
+
+The Pre-Construction domain produces:
+
+- Project Readiness Status
+- Land Readiness
+- Statutory Readiness
+- Regulatory Readiness
+- Forecast Dates
+- Supporting Documentation
+- Readiness KPIs
+
+
+# 9. Engineering
+
+## 9.1 Purpose
+
+The Engineering domain converts the approved project scope into executable engineering deliverables that enable procurement and construction.
+
+Engineering is a controlled, document-driven lifecycle. Every engineering output progresses through defined review, revision and approval workflows before it becomes available for execution.
+
+The primary objective is to produce technically approved documents that are released for construction.
+
+---
+
+# 9.2 Objectives
+
+Engineering aims to:
+
+- Define technical requirements.
+- Develop engineering deliverables.
+- Manage engineering vendors and consultants.
+- Establish the Master Deliverable List (MDL).
+- Control engineering document lifecycle.
+- Issue approved drawings for construction.
+- Support procurement through technical specifications.
+- Support construction through approved engineering documentation.
+
+---
+
+# 9.3 Primary Systems
+
+Primary Systems
+
+- Autodesk CDE / Autodesk Forms
+- Autodesk Document Management
+
+Supporting Systems
+
+- Primavera P6
+- SAP
+- Enterprise Data Lake
+- Enterprise Dashboards
+
+---
+
+# 9.4 Engineering Execution Philosophy
+
+Engineering execution follows the enterprise Packaging Strategy.
+
+The Packaging Strategy determines how project scope is divided into executable packages.
+
+Typical package strategies include:
+
+- Engineering
+- Engineering + Supply
+- Supply
+- Supply + Service
+- Engineering + Procurement + Construction (EPC)
+
+The Packaging Strategy governs:
+
+- Vendor selection
+- Procurement strategy
+- Engineering ownership
+- Construction responsibility
+
+It is considered a governing business artifact.
+
+---
+
+# 9.5 Engineering Participants
+
+Typical stakeholders include:
+
+### Project Team
+
+Owns package execution.
+
+Coordinates engineering activities.
+
+---
+
+### Engineering Team
+
+Owns engineering execution.
+
+Reviews engineering deliverables.
+
+Coordinates vendors.
+
+---
+
+### Consultant (Owner's Engineer)
+
+May perform:
+
+- Basic Engineering
+- Design Review
+- Technical Validation
+- Vendor Document Review
+
+Some projects may not appoint a consultant.
+
+In such cases, owner engineering performs these activities directly.
+
+---
+
+### Engineering Vendor
+
+Produces engineering deliverables.
+
+Participates in technical clarification meetings.
+
+Submits engineering documents.
+
+Responds to review comments.
+
+---
+
+# 9.6 Engineering Lifecycle
+
+```text
+Packaging Strategy
+        │
+        ▼
+Engineering Package
+        │
+        ▼
+Vendor Selection
+        │
+        ▼
+Vendor Onboarding
+        │
+        ▼
+Master Deliverable List
+        │
+        ▼
+Engineering Documents
+        │
+        ▼
+Review
+        │
+        ▼
+Revision
+        │
+        ▼
+Approval
+        │
+        ▼
+RFC / GFC
+```
+
+---
+
+# 9.7 Engineering Types
+
+Engineering generally progresses through:
+
+- Basic Engineering
+- Detailed Engineering
+
+The exact execution strategy varies by package.
+
+---
+
+# 9.8 Building Information Modelling (BIM)
+
+The enterprise adopts BIM principles.
+
+Typical maturity stages include:
+
+- LOD 100
+- LOD 200
+- LOD 300
+- Higher maturity levels as applicable
+
+LOD primarily applies to engineering models and is not currently used as a formal executive KPI.
+
+---
+
+# 9.9 Master Deliverable List (MDL)
+
+Following vendor onboarding, a Master Deliverable List (MDL) is prepared.
+
+The MDL defines every engineering deliverable expected for the package.
+
+The MDL is jointly established by:
+
+- Engineering Vendor
+- Owner Engineering
+
+It undergoes review until both parties mutually agree on the deliverable baseline.
+
+Once agreed, it becomes the engineering baseline for that package.
+
+---
+
+# 9.10 MDL Attributes
+
+Typical MDL information includes:
+
+- Document Name
+- Document Type
+- Discipline
+- Planned Submission Date
+- Planned Approval Date
+- Current Status
+- Current Revision
+- Vendor
+- Package
+- Priority
+
+The MDL forms the primary planning instrument for engineering deliverables.
+
+---
+
+# 9.11 Engineering Documents
+
+Typical engineering deliverables include:
+
+Civil
+
+- Plot Plans
+- Foundation Drawings
+- Structural Drawings
+
+Mechanical
+
+- General Arrangement Drawings
+- Equipment Layouts
+- P&IDs
+
+Electrical
+
+- Single Line Diagrams
+- Cable Schedules
+
+Instrumentation
+
+- Loop Diagrams
+- Hook-up Drawings
+
+Additional discipline-specific documents exist depending on project type.
+
+These examples are indicative rather than enterprise-standard document masters.
+
+---
+
+# 9.12 Document Lifecycle
+
+Each engineering document progresses independently.
+
+```text
+Draft
+        │
+        ▼
+Vendor Submission
+        │
+        ▼
+Consultant Review
+        │
+        ▼
+Owner Review
+        │
+        ▼
+Comments
+        │
+        ▼
+Vendor Revision
+        │
+        ▼
+Approved
+        │
+        ▼
+RFC / GFC
+```
+
+Certain projects may bypass consultant review depending upon execution strategy.
+
+---
+
+# 9.13 Revisions
+
+Every document maintains independent revision history.
+
+Review comments are attached to a specific document revision rather than the document as a whole.
+
+Only approved revisions become eligible for construction.
+
+Subsequent revisions represent controlled engineering changes.
+
+---
+
+# 9.14 RFC / GFC
+
+Engineering documents become available for construction only after they are released.
+
+Typical release status:
+
+- RFC (Released for Construction)
+- GFC (Good for Construction)
+
+Release occurs at the document level.
+
+Different documents within the same package may achieve RFC/GFC at different times.
+
+Package engineering completion is therefore achieved progressively rather than through a single release event.
+
+---
+
+# 9.15 Document Controller
+
+The enterprise maintains Document Controllers.
+
+Responsibilities include:
+
+- Workflow governance
+- Routing documents
+- Managing review workflows
+- Category-based routing
+- Revision governance
+- Document distribution
+
+The Document Controller governs the engineering document workflow but does not perform technical reviews.
+
+---
+
+# 9.16 Autodesk
+
+Autodesk serves as the enterprise engineering platform.
+
+Capabilities include:
+
+- Document Management
+- Review Workflow
+- Revision Control
+- Approval Workflow
+- MDL Management
+- Transmittals
+- Common Data Environment (CDE)
+
+Autodesk acts as the engineering system of record.
+
+---
+
+# 9.17 Engineering Progress
+
+Engineering progress is primarily measured through document completion.
+
+Typical KPIs include:
+
+- Planned Deliverables
+- Submitted Deliverables
+- Approved Deliverables
+- Overdue Deliverables
+- Documents Pending with Vendor
+- Documents Pending with Consultant
+- Documents Pending with Owner
+
+Engineering progress is document-centric rather than activity-centric.
+
+---
+
+# 9.18 Relationship with Procurement
+
+Engineering supplies procurement with:
+
+- Technical Specifications
+- Technical Clarifications
+- Technical Bid Evaluation
+
+Engineering remains actively involved throughout technical evaluation until vendor award.
+
+Commercial evaluation remains outside Engineering.
+
+---
+
+# 9.19 Relationship with Construction
+
+Construction consumes:
+
+- RFC Drawings
+- GFC Drawings
+
+Construction readiness depends directly upon engineering document availability.
+
+Engineering therefore represents one of the primary upstream dependencies for construction execution.
+
+---
+
+# 9.20 Business Rules
+
+### BR-019
+
+Every engineering package shall maintain an MDL.
+
+---
+
+### BR-020
+
+Engineering documents shall follow controlled revision management.
+
+---
+
+### BR-021
+
+Review comments belong to a specific document revision.
+
+---
+
+### BR-022
+
+Only approved RFC/GFC documents may be used for construction.
+
+---
+
+### BR-023
+
+Engineering progress is measured using document status rather than package completion alone.
+
+---
+
+### BR-024
+
+MDL ownership is jointly shared between the engineering vendor and owner engineering.
+
+---
+
+# 9.21 Outputs
+
+Engineering produces:
+
+- Technical Specifications
+- MDL
+- Engineering Documents
+- Approved Revisions
+- RFC/GFC Drawings
+- Engineering KPIs
+- Engineering Progress
+- Engineering Documentation Repository
+
+These outputs enable Procurement, Construction and Progress Measurement while serving as one of the principal dependency chains for enterprise reasoning.
+
+# 10. Procurement
+
+## 10.1 Purpose
+
+The Procurement domain transforms approved business requirements into legally awarded contracts for the supply of materials, services and engineering packages.
+
+Although procurement is an enterprise capability supporting both CAPEX and OPEX, this document focuses on procurement activities associated with capital projects.
+
+Procurement begins with an approved Purchase Request (PR) and concludes with the issuance of a Purchase Order (PO) or Service Order (SO).
+
+Material delivery, billing and payment occur after procurement and belong to downstream domains.
+
+---
+
+# 10.2 Objectives
+
+The Procurement domain aims to:
+
+- Procure technically compliant solutions.
+- Ensure commercial competitiveness.
+- Award contracts to approved vendors.
+- Maintain procurement governance.
+- Ensure procurement transparency.
+- Support engineering and construction execution.
+
+---
+
+# 10.3 Primary Systems
+
+Primary Systems
+
+- SAP
+- SAP Ariba
+- Ariba BTP (Commercial NFA)
+
+Supporting Systems
+
+- CapExpert
+- Primavera
+- Enterprise Data Lake
+- Enterprise Dashboards
+
+---
+
+# 10.4 Procurement Philosophy
+
+Procurement follows a **Technical → Commercial** evaluation model.
+
+Technical suitability is established before commercial evaluation.
+
+Only technically accepted proposals proceed to commercial comparison.
+
+This separation is a fundamental enterprise governance principle.
+
+---
+
+# 10.5 SAP Project Preparation
+
+Before procurement begins, the project must exist within SAP.
+
+The Capital Finance Monitoring & Control team ensures that:
+
+- Project Definition is created.
+- Plant Code is assigned.
+- Company Code is assigned.
+- SAP WBS hierarchy is created.
+
+The WBS hierarchy is derived from the approved project structure.
+
+Enterprise standardization exists up to Level 3.
+
+Business-specific structures extend beyond this level.
+
+---
+
+# 10.6 Purchase Request (PR)
+
+Procurement begins with creation of a Purchase Request (PR).
+
+The PR represents the formal business request to procure materials or services.
+
+Typical PR information includes:
+
+- Project
+- Package
+- WBS
+- Estimated Budget
+- Technical Requirement
+- Procurement Category
+- Required Delivery
+
+Although multiple packages may technically be included within one PR, enterprise best practice is one package per PR.
+
+---
+
+# 10.7 Budget Validation
+
+Each PR reserves budget against the approved project allocation.
+
+Budget availability is validated before procurement proceeds.
+
+The reserved amount contributes towards project commitment.
+
+(The detailed commitment accounting process is maintained separately within the Finance domain.)
+
+---
+
+# 10.8 Vendor Eligibility
+
+Standard procurement is restricted to enterprise Approved Vendors.
+
+The Approved Vendor Master is centrally governed.
+
+New vendors may undergo qualification separately before participating in procurement.
+
+Vendor qualification itself is outside the scope of the procurement lifecycle.
+
+---
+
+# 10.9 Vendor Platform Onboarding
+
+Vendor qualification and vendor platform onboarding are distinct processes.
+
+Vendor Platform Onboarding grants vendors access to Ariba for participation in procurement events.
+
+This onboarding must be completed before bidding begins.
+
+---
+
+# 10.10 Request for Proposal (RFP)
+
+Each PR results in one Request for Proposal (RFP).
+
+The RFP contains:
+
+- Technical Requirements
+- Scope
+- Commercial Conditions
+- Submission Instructions
+- Supporting Documents
+
+For engineering packages, Technical Specifications prepared by Engineering form part of the RFP.
+
+---
+
+# 10.11 Technical Clarification
+
+During bidding, vendors may request clarification.
+
+Typical interactions include:
+
+- Technical Clarification Meetings
+- Bid Meetings
+- Engineering Discussions
+- Consultant Participation
+
+These interactions ensure that vendors understand the technical requirements before bid submission.
+
+Once the clarification stage closes, technical requirements are considered frozen for that procurement event.
+
+---
+
+# 10.12 Technical Bid Evaluation
+
+Following bid submission, Engineering evaluates technical compliance.
+
+The outcome is documented through the Technical Bid Evaluation Report (TBER).
+
+The TBER compares all participating vendors and establishes technical rankings (e.g., T1, T2).
+
+Commercial evaluation begins only after technical evaluation is complete.
+
+---
+
+# 10.13 Commercial Evaluation
+
+Commercial evaluation is performed by Procurement.
+
+Typical activities include:
+
+- Price Comparison
+- Reverse Auction
+- Commercial Negotiation
+- Commercial Deviations
+- Final Recommendation
+
+Reverse Auction represents the preferred enterprise mechanism where applicable.
+
+Alternative approaches may be adopted for exceptional procurement scenarios.
+
+---
+
+# 10.14 Internal Estimate
+
+Before commercial evaluation, the Estimation Team prepares an independent cost estimate.
+
+Characteristics:
+
+- Confidential during bidding.
+- Visible only to internal stakeholders.
+- Included in Commercial NFA.
+- Used as a commercial benchmark.
+
+Significant deviation between awarded value and internal estimate triggers additional scrutiny.
+
+---
+
+# 10.15 Commercial NFA
+
+Following commercial evaluation, Procurement prepares a Commercial NFA.
+
+The Commercial NFA captures:
+
+- Procurement Summary
+- Vendor Comparison
+- Negotiation Outcome
+- Internal Estimate
+- Recommended Vendor
+- Supporting Documents
+- Commercial Deviations
+
+Approval follows the Delegation of Authority applicable to commercial approvals.
+
+Large procurements additionally undergo executive scrutiny similar to CAPEX approvals.
+
+---
+
+# 10.16 Purchase Order / Service Order
+
+Following Commercial NFA approval:
+
+- SAP creates the Purchase Order.
+- Ariba synchronizes procurement information with SAP.
+
+SAP is the enterprise System of Record for both PR and PO.
+
+Purchase Orders are used for material procurement.
+
+Service Orders are used for service procurement.
+
+---
+
+# 10.17 Purchase Order Contents
+
+Typical Purchase Order information includes:
+
+- Vendor
+- Package
+- Line Items
+- Delivery Schedule
+- Payment Terms
+- Payment Milestones
+- Liquidated Damages (LD)
+- Performance Guarantees
+- Letter of Credit (where applicable)
+
+The Purchase Order becomes the governing contractual document for execution.
+
+---
+
+# 10.18 Procurement Completion
+
+From a procurement perspective, procurement is considered complete when the Purchase Order or Service Order has been issued.
+
+Subsequent activities such as:
+
+- Delivery
+- Inspection
+- Goods Receipt
+- Invoice
+- Payment
+
+belong to downstream operational domains.
+
+---
+
+# 10.19 Purchase Order Amendments
+
+Changes after award are managed through:
+
+- PO Amendment
+- Commercial Amendment NFA
+
+Major scope revisions may require Credit Purchase Orders depending upon business requirements.
+
+Current enterprise systems do not explicitly maintain traceable relationships between original Commercial NFAs and amendment NFAs.
+
+These relationships must be inferred through business context.
+
+---
+
+# 10.20 Procurement KPIs
+
+Typical procurement KPIs include:
+
+Operational KPIs
+
+- PR Aging
+- RFP Aging
+- PR to PO Cycle Time
+- Commercial NFA Approval Time
+- Reverse Auction Count
+- Vendor Response Rate
+
+Commercial KPIs
+
+- Internal Estimate vs Award Value
+- Procurement Savings
+- Commercial Variance
+
+Governance KPIs
+
+- Document Retention
+- Procurement Cycle Time
+- Approval Turnaround
+
+---
+
+# 10.21 Relationships with Other Domains
+
+### Engineering
+
+Provides:
+
+- Technical Specifications
+- Technical Evaluation
+- Technical Clarifications
+
+---
+
+### Finance
+
+Provides:
+
+- Budget Validation
+- Commitment
+- Payment Processing
+
+---
+
+### Construction
+
+Consumes:
+
+- Purchase Orders
+- Material Deliveries
+- Service Contracts
+
+---
+
+### Progress Measurement
+
+Procurement milestones contribute to enterprise progress reporting and schedule monitoring.
+
+---
+
+# 10.22 Business Rules
+
+### BR-025
+
+Standard procurement shall use Approved Vendors.
+
+---
+
+### BR-026
+
+Each PR shall produce one RFP.
+
+---
+
+### BR-027
+
+Commercial evaluation shall begin only after technical evaluation.
+
+---
+
+### BR-028
+
+SAP is the enterprise System of Record for PR and PO.
+
+---
+
+### BR-029
+
+Procurement completion occurs upon PO/SO issuance.
+
+---
+
+### BR-030
+
+Purchase Orders and Service Orders are governed through Commercial NFAs.
+
+---
+
+### BR-031
+
+Internal Estimates remain confidential throughout bidding.
+
+---
+
+# 10.23 Outputs
+
+The Procurement domain produces:
+
+- Purchase Requests
+- Request for Proposals
+- Technical Bid Evaluation Reports
+- Commercial NFAs
+- Purchase Orders
+- Service Orders
+- Procurement KPIs
+- Procurement Documentation
+
+These outputs enable Engineering execution, Material Supply, Construction, Finance and downstream operational processes.
+
+
+# 11. Construction
+
+## 11.1 Purpose
+
+The Construction domain governs the physical execution of project work at site. It transforms approved engineering deliverables, procured materials and contracted services into completed physical assets.
+
+Construction is the primary execution domain where engineering, procurement, planning, finance, quality and safety converge.
+
+Unlike Engineering, which is document-centric, Construction is **activity-centric**.
+
+---
+
+# 11.2 Objectives
+
+Construction aims to:
+
+- Execute approved scope.
+- Construct assets as per approved engineering.
+- Utilize materials efficiently.
+- Monitor contractor performance.
+- Capture daily execution progress.
+- Support physical progress reporting.
+- Achieve planned milestones.
+
+---
+
+# 11.3 Primary Participants
+
+Construction execution typically involves:
+
+### Project Team
+
+Overall package ownership.
+
+Responsible for:
+
+- Execution
+- Coordination
+- Monitoring
+- Reporting
+
+---
+
+### Package Owner
+
+Accountable for execution of the assigned package.
+
+Validates progress reported from site.
+
+Coordinates contractors.
+
+---
+
+### Contractor
+
+Responsible for execution of construction work.
+
+Typical responsibilities include:
+
+- Mobilization
+- Manpower deployment
+- Equipment deployment
+- Daily execution
+- Progress reporting
+
+Generally, one construction package is awarded to one contractor. However, the same contractor may execute multiple packages across the project.
+
+---
+
+### Site Team
+
+Responsible for:
+
+- Site supervision
+- Daily monitoring
+- DPR preparation
+- Progress validation
+
+---
+
+## 11.4 Construction Readiness
+
+Construction does not begin through a single approval.
+
+Readiness depends upon the activity.
+
+Typical prerequisites include:
+
+- RFC/GFC drawings available
+- Relevant statutory approvals completed
+- Land available
+- Materials available (where applicable)
+- Site readiness
+
+Different activities may satisfy different readiness conditions.
+
+---
+
+## 11.5 Construction Process
+
+```text
+Construction Ready
+        │
+        ▼
+Mobilization
+        │
+        ▼
+Daily Execution
+        │
+        ▼
+Daily Progress Reporting
+        │
+        ▼
+Weekly Progress Validation
+        │
+        ▼
+Progress Update
+        │
+        ▼
+Activity Completion
+```
+
+---
+
+## 11.6 Execution Philosophy
+
+Construction is managed at the **Activity** level.
+
+Activities are derived from Primavera.
+
+An activity may occur:
+
+- Across multiple buildings.
+- Across multiple zones.
+- Across multiple packages.
+
+Similarly, a package may contain multiple activities.
+
+This relationship is dynamic and depends upon project execution strategy.
+
+---
+
+## 11.7 Daily Progress Reporting (DPR)
+
+Daily Progress Reports (DPR) capture site execution.
+
+Preparation:
+
+- Site Team
+- Contractor
+
+Accountability:
+
+- Package Owner
+
+Typical DPR information includes:
+
+- Activities executed
+- Quantities completed
+- Manpower deployed
+- Equipment deployed
+- Site remarks
+- Issues
+- Constraints
+
+---
+
+## 11.8 Weekly Progress Reporting (WPR)
+
+Weekly Progress Reports consolidate daily execution.
+
+Validated progress is subsequently entered into Primavera.
+
+Enterprise dashboards consume this information through the Data Lake.
+
+---
+
+## 11.9 Physical Progress
+
+Physical progress is primarily measured from Primavera activities.
+
+Depending upon activity type, progress may be determined through:
+
+- Activity completion
+- Executed quantities
+- Labour-unit based progress
+
+The enterprise permits manual updates where automated calculation is impractical.
+
+---
+
+## 11.10 Construction Quantities
+
+Many activities additionally capture measurable quantities.
+
+Examples include:
+
+- Concrete
+- Structural Steel
+- Piping
+- Cable Laying
+- Equipment Installation
+
+Quantities support:
+
+- Activity completion
+- Productivity analysis
+- Construction reporting
+
+The quantity structure varies by Business Unit.
+
+---
+
+## 11.11 Material Consumption
+
+Materials follow the lifecycle:
+
+```text
+Purchase Order
+        │
+        ▼
+Material Delivery
+        │
+        ▼
+Goods Receipt (GRN)
+        │
+        ▼
+Inventory
+        │
+        ▼
+Issue to Contractor
+        │
+        ▼
+Consumption
+        │
+        ▼
+Reconciliation
+```
+
+Construction consumes materials issued from inventory.
+
+Material Management governs inventory, issuance and reconciliation.
+
+---
+
+## 11.12 Free Issue Material
+
+Certain materials are procured directly by the enterprise and issued to contractors.
+
+These are referred to as **Free Issue Materials (FIM).**
+
+The contractor utilizes the issued materials during execution.
+
+Material reconciliation is performed after execution and contract closure to account for:
+
+- Consumption
+- Balance Material
+- Recoveries (if applicable)
+
+---
+
+## 11.13 Equipment
+
+Construction execution also depends upon equipment and machinery.
+
+Typical examples include:
+
+- Cranes
+- Excavators
+- Batching Plants
+- Welding Equipment
+
+Equipment utilization may be monitored through enterprise systems or business-specific spreadsheets.
+
+---
+
+## 11.14 Construction Constraints
+
+Execution is influenced by multiple constraints.
+
+Examples include:
+
+- Material Availability
+- Engineering Deliverables
+- Labour Availability
+- Equipment Availability
+- Vendor Performance
+- Regulatory Readiness
+
+Some constraints are systematically captured while others are reviewed during project governance meetings.
+
+---
+
+## 11.15 Activity Completion
+
+Construction activities are considered complete when physical execution reaches 100%.
+
+Subsequent quality verification and commissioning belong to downstream domains.
+
+---
+
+## 11.16 Relationship with Engineering
+
+Construction consumes:
+
+- RFC Drawings
+- GFC Drawings
+
+Construction cannot proceed where required engineering deliverables remain unavailable.
+
+Engineering therefore represents one of the principal upstream dependencies.
+
+---
+
+## 11.17 Relationship with Procurement
+
+Construction consumes:
+
+- Purchase Orders
+- Service Orders
+- Materials
+- Contractors
+
+Procurement completes upon PO issuance.
+
+Construction begins after contractual execution starts.
+
+---
+
+## 11.18 Relationship with Material Management
+
+Construction consumes inventory managed through Material Management.
+
+Typical interactions include:
+
+- Material Issue
+- Consumption
+- Reconciliation
+
+Detailed Material Management processes are maintained separately.
+
+---
+
+## 11.19 Relationship with Quality
+
+Quality performs:
+
+- Material Inspection
+- Site Inspection
+- NCR Management
+- Acceptance Verification
+
+Construction execution is therefore continuously monitored from a quality perspective.
+
+---
+
+## 11.20 Relationship with Safety
+
+Construction is the primary producer of safety observations.
+
+Typical safety records include:
+
+- Permit to Work
+- Safety Observation
+- Near Miss
+- Incident
+- Lost Time Injury (LTI)
+- Fatalities
+- Safety Audits
+- PPE Compliance
+
+Safety information is primarily maintained at the site level.
+
+---
+
+## 11.21 Construction KPIs
+
+Typical executive KPIs include:
+
+Execution
+
+- Physical Progress
+- Planned vs Actual Progress
+- Milestone Achievement
+
+Productivity
+
+- Productivity
+- Run Rate
+- Ask Rate
+
+Resources
+
+- Manpower Deployment
+- Equipment Utilization
+
+Construction
+
+- Material Availability
+- Critical Activities
+- Delayed Activities
+
+---
+
+## 11.22 Business Rules
+
+### BR-032
+
+Construction execution shall use approved RFC/GFC documents.
+
+---
+
+### BR-033
+
+Construction progress shall be reported at the activity level.
+
+---
+
+### BR-034
+
+Package Owners remain accountable for validated construction progress.
+
+---
+
+### BR-035
+
+Free Issue Materials shall undergo reconciliation.
+
+---
+
+### BR-036
+
+Construction completion represents physical completion only.
+
+Quality, commissioning and handover remain downstream lifecycle stages.
+
+---
+
+## 11.23 Outputs
+
+Construction produces:
+
+- Physical Assets
+- Daily Progress Reports
+- Weekly Progress Reports
+- Activity Progress
+- Material Consumption
+- Productivity Metrics
+- Construction KPIs
+- Execution History
+
+These outputs provide the primary input for Progress Measurement, Finance, Quality, Safety and Executive Governance.
+
+
+---
+
+Internal architectural update (completed)
+
+During Construction, I identified another reusable enterprise abstraction.
+
+Execution Resources
+
+Instead of treating these independently:
+
+Manpower
+
+Materials
+
+Machinery
+
+
+I'll introduce a generic Execution Resource concept in Document 5 (Ontology Export Specification).
+
+It will have specialized types:
+
+Human Resource
+
+Material Resource
+
+Equipment Resource
+
+
+This avoids duplication in the ontology while allowing reasoning such as:
+
+> "Which execution resources are constraining Activity X?"
+
+
+
+without separately traversing manpower, materials and machinery every time.
+
+This abstraction won't change the business documentation but will significantly improve the knowledge graph design.
+
+# 12. Progress Measurement
+
+## 12.1 Purpose
+
+Progress Measurement provides the enterprise with a standardized mechanism to monitor project performance across schedule, physical execution, financial performance and resource utilization.
+
+Unlike Planning, which defines the intended execution path, Progress Measurement evaluates actual performance against approved baselines and forecasts future outcomes.
+
+It is the primary domain used by executive management for project governance.
+
+---
+
+# 12.2 Objectives
+
+The Progress Measurement domain aims to:
+
+- Monitor project execution.
+- Compare planned and actual performance.
+- Measure physical progress.
+- Measure financial progress.
+- Monitor productivity.
+- Forecast project completion.
+- Support executive decision making.
+
+---
+
+# 12.3 Enterprise Performance Dimensions
+
+The enterprise monitors projects through multiple complementary dimensions.
+
+## Physical Progress
+
+Represents actual execution completed on site.
+
+---
+
+## Financial Progress
+
+Represents capital expenditure incurred against approved plans.
+
+---
+
+## Cash Flow
+
+Represents actual cash movement to vendors.
+
+---
+
+## Schedule Performance
+
+Measures execution against the approved schedule baseline.
+
+---
+
+## Productivity
+
+Measures execution efficiency.
+
+---
+
+## Resource Performance
+
+Monitors manpower, materials and machinery.
+
+---
+
+## Financial Metrics
+
+Monitors project investment performance.
+
+---
+
+# 12.4 Primary Systems
+
+Primary Sources
+
+- Primavera P6
+- SAP
+
+Supporting Systems
+
+- Enterprise Data Lake
+- Enterprise Dashboards
+- CapExpert
+
+---
+
+# 12.5 Performance Philosophy
+
+Enterprise performance is always measured against an approved baseline.
+
+Examples include:
+
+- Schedule Baseline
+- CAPEX Baseline
+- Annual Operating Plan (AOP)
+- Financial Baseline
+
+Variances are meaningful only when compared against approved reference values.
+
+---
+
+# 12.6 Physical Progress
+
+Physical Progress represents actual project execution.
+
+The primary source of Physical Progress is Primavera.
+
+Progress originates from validated construction activities and is updated through:
+
+- Daily Progress Reports
+- Weekly Progress Reports
+- Primavera Updates
+
+Progress is primarily labour-unit based while permitting manual updates for specific activity types.
+
+---
+
+# 12.7 Financial Progress
+
+Financial Progress measures CAPEX incurred relative to approved plans.
+
+The enterprise monitors two complementary views.
+
+### Annual Financial Progress
+
+```text
+Actual YTD CAPEX
+
+÷
+
+YTD Approved AOP
+```
+
+This is the primary executive KPI.
+
+---
+
+### Overall Financial Progress
+
+```text
+Actual Project CAPEX
+
+÷
+
+Approved Project CAPEX
+```
+
+This represents total project financial completion.
+
+Both measures are required for executive governance.
+
+---
+
+# 12.8 CAPEX
+
+Enterprise CAPEX is recognized when:
+
+- Material has been received through GRN
+
+OR
+
+- Services have been accepted through SES
+
+Invoice submission and payment are not prerequisites for CAPEX recognition.
+
+This definition differs fundamentally from Cash Flow.
+
+---
+
+# 12.9 Cash Flow
+
+Cash Flow represents actual cash movement.
+
+Typical components include:
+
+- Advance Payments
+- Vendor Payments
+- Settlement Payments
+
+Cash Flow therefore differs from CAPEX.
+
+A project may incur CAPEX without corresponding cash outflow or vice versa.
+
+---
+
+# 12.10 Annual Operating Plan (AOP)
+
+Every financial year, the enterprise prepares an Annual Operating Plan.
+
+The AOP contains:
+
+- Annual CAPEX Plan
+- Annual Cash Flow Plan
+
+The AOP represents only the current financial year and therefore differs from the complete project CAPEX baseline established during project approval.
+
+---
+
+# 12.11 AOP Categories
+
+The annual plan classifies expenditure into:
+
+- Project CAPEX
+- Maintenance CAPEX
+- Operational Expenditure (OPEX)
+
+This document focuses only on Project CAPEX.
+
+---
+
+# 12.12 Run Rate
+
+Run Rate measures the current execution pace.
+
+Typical dimensions include:
+
+- Weekly Run Rate
+- Monthly Run Rate
+
+Run Rate may represent:
+
+- Physical execution
+- Financial expenditure
+
+depending upon reporting context.
+
+---
+
+# 12.13 Ask Rate
+
+Ask Rate represents the execution pace required to complete the remaining scope within the remaining project duration.
+
+Ask Rate serves as an executive forecasting KPI.
+
+---
+
+# 12.14 Productivity
+
+Productivity measures execution efficiency.
+
+The preferred business interpretation is:
+
+```text
+Output
+
+÷
+
+Manpower
+```
+
+Additional interpretations may include:
+
+- Output per Time
+- Planned Quantity vs Actual Quantity
+
+depending upon project type.
+
+---
+
+# 12.15 Manpower
+
+Typical manpower metrics include:
+
+- Planned Manpower
+- Actual Manpower
+- Peak Manpower
+
+Certain Business Units additionally monitor:
+
+- Skilled Manpower
+- Unskilled Manpower
+
+These metrics may originate from Primavera or business-specific operational systems.
+
+---
+
+# 12.16 Vendor Performance
+
+Vendor performance is monitored throughout execution.
+
+Typical indicators include:
+
+- Productivity
+- Milestone Achievement
+- Delivery Performance
+- Quality
+- Responsiveness
+
+Enterprise scorecard methodologies vary by Business Unit.
+
+---
+
+# 12.17 Forecasting
+
+Management periodically forecasts:
+
+- Final Project Cost (EAC / Estimated at Completion)
+- Final Completion Date
+- Financial Metrics (where significant business changes occur)
+
+Forecasts are refreshed following major scope, budget or market changes.
+
+---
+
+# 12.18 Executive Dashboards
+
+Enterprise dashboards support multiple review cadences.
+
+Typical review frequencies include:
+
+- Daily
+- Weekly
+- Monthly
+- Executive Reviews
+
+Although dashboards expose numerous KPIs, approximately one-third of the indicators form the primary executive decision set.
+
+---
+
+# 12.19 Executive KPIs
+
+Typical executive review indicators include:
+
+Schedule
+
+- Physical Progress
+- Planned vs Actual Progress
+- Critical Path
+
+Financial
+
+- Financial Progress
+- Cash Flow
+- CAPEX
+- Forecast Cost
+
+Execution
+
+- Productivity
+- Run Rate
+- Ask Rate
+- Manpower Deployment
+
+Governance
+
+- Estimated Completion
+- Major Milestones
+- Key Risks
+
+---
+
+# 12.20 S-Curve
+
+The S-Curve compares:
+
+- Planned Progress
+- Actual Progress
+
+It remains one of the principal schedule performance visualizations.
+
+---
+
+# 12.21 Enterprise Reporting
+
+Progress information is derived from multiple systems.
+
+Typical lineage includes:
+
+```text
+Site Execution
+        │
+        ▼
+DPR / WPR
+        │
+        ▼
+Primavera
+        │
+        ▼
+Enterprise Data Lake
+        │
+        ▼
+Dashboards
+```
+
+Financial information follows an analogous path from SAP.
+
+---
+
+# 12.22 Business Rules
+
+### BR-037
+
+Physical Progress originates from Primavera.
+
+---
+
+### BR-038
+
+Financial Progress and Cash Flow represent different business concepts.
+
+---
+
+### BR-039
+
+CAPEX is recognized through GRN and SES.
+
+---
+
+### BR-040
+
+Annual Financial Progress is measured against the approved AOP.
+
+---
+
+### BR-041
+
+Run Rate measures current execution pace.
+
+---
+
+### BR-042
+
+Ask Rate measures required future execution pace.
+
+---
+
+### BR-043
+
+Executive reporting shall compare performance against approved baselines.
+
+---
+
+# 12.23 Outputs
+
+The Progress Measurement domain produces:
+
+- Physical Progress
+- Financial Progress
+- CAPEX Progress
+- Cash Flow Progress
+- Productivity Metrics
+- Run Rate
+- Ask Rate
+- Executive Dashboards
+- Forecast Metrics
+- Project Performance Indicators
+
+These outputs support enterprise governance, executive decision making and AI-driven project diagnostics.
+
+
+
+---
+
+# 13. Cross-Domain Process Integration
+
+## 13.1 Purpose
+
+Although the enterprise manages Planning, Engineering, Procurement, Construction and Finance through separate business domains and applications, project execution is an integrated process.
+
+No domain operates independently.
+
+Every downstream activity depends upon one or more upstream business outputs.
+
+Understanding these dependencies is essential for:
+
+- Project Governance
+- Executive Decision Making
+- Root Cause Analysis
+- AI-assisted Reasoning
+- Enterprise Reporting
+
+---
+
+# 13.2 Enterprise Process Flow
+
+The complete lifecycle is illustrated below.
+
+```text
+Business Opportunity
+        │
+        ▼
+Project Initiation
+        │
+        ▼
+CAPEX Approval (NFA)
+        │
+        ▼
+Planning
+        │
+        ├────────────┐
+        ▼            ▼
+Pre-Construction   Engineering
+        │            │
+        │            ▼
+        │       Procurement
+        │            │
+        └──────┬─────┘
+               ▼
+         Construction
+               │
+               ▼
+     Progress Measurement
+               │
+               ▼
+Executive Governance
+```
+
+The enterprise executes several domains in parallel after project approval.
+
+---
+
+# 13.3 Domain Dependencies
+
+## Project Initiation
+
+Produces:
+
+- Approved Project
+- Approved CAPEX
+- Financial Baseline
+- Initial Milestones
+- Pre-Construction Baseline
+
+Consumed by:
+
+- Planning
+- Finance
+- Engineering
+- Procurement
+
+---
+
+## Planning
+
+Produces:
+
+- Primavera Schedule
+- Activities
+- Baseline
+- Critical Path
+
+Consumed by:
+
+- Engineering
+- Procurement
+- Construction
+- Progress Measurement
+
+---
+
+## Pre-Construction
+
+Produces:
+
+- Readiness Status
+- Land Status
+- Statutory Approvals
+
+Consumed by:
+
+- Engineering
+- Construction
+
+---
+
+## Engineering
+
+Produces:
+
+- Technical Specifications
+- RFC/GFC Drawings
+- Engineering Deliverables
+
+Consumed by:
+
+- Procurement
+- Construction
+
+---
+
+## Procurement
+
+Produces:
+
+- Purchase Orders
+- Service Orders
+- Vendor Contracts
+
+Consumed by:
+
+- Construction
+- Material Management
+- Finance
+
+---
+
+## Construction
+
+Produces:
+
+- Physical Progress
+- DPR
+- WPR
+- Material Consumption
+
+Consumed by:
+
+- Progress Measurement
+- Finance
+- Quality
+- Safety
+
+---
+
+## Progress Measurement
+
+Produces:
+
+- Executive KPIs
+- Forecasts
+- Performance Reports
+
+Consumed by:
+
+- Executive Management
+- PMO
+- Business Leadership
+
+---
+
+# 13.4 Cross-System Information Flow
+
+The enterprise operates multiple business applications.
+
+Each application owns a specific business capability.
+
+```text
+CapExpert
+      │
+      ▼
+Primavera
+      │
+      ▼
+PreCon360
+      │
+      ▼
+Autodesk
+      │
+      ▼
+Ariba
+      │
+      ▼
+SAP
+      │
+      ▼
+Enterprise Data Lake
+      │
+      ▼
+Enterprise Dashboards
+```
+
+These systems collectively form the enterprise digital project ecosystem.
+
+---
+
+# 13.5 Enterprise Governance Layers
+
+Governance exists at multiple levels.
+
+## Investment Governance
+
+- CAPEX NFA
+- Amendment NFA
+
+---
+
+## Planning Governance
+
+- Baseline Approval
+- Schedule Review
+
+---
+
+## Engineering Governance
+
+- MDL
+- Document Reviews
+- RFC Approval
+
+---
+
+## Procurement Governance
+
+- Commercial NFA
+- PO Approval
+
+---
+
+## Construction Governance
+
+- DPR
+- WPR
+- Package Reviews
+
+---
+
+## Executive Governance
+
+- PMAT
+- CPMAT
+- CEO Reviews
+- Chairman Reviews
+
+---
+
+# 13.6 Cross-Domain Business Rules
+
+### BR-044
+
+Construction shall consume only approved engineering outputs.
+
+---
+
+### BR-045
+
+Engineering shall produce deliverables according to approved planning baselines.
+
+---
+
+### BR-046
+
+Procurement shall procure only approved technical requirements.
+
+---
+
+### BR-047
+
+Financial reporting shall use approved CAPEX baselines.
+
+---
+
+### BR-048
+
+Executive dashboards shall consume validated enterprise data.
+
+---
+
+# 13.7 Enterprise Traceability
+
+The enterprise shall be capable of tracing any operational issue back to its originating business process.
+
+Illustrative examples include:
+
+Construction Delay
+
+↓
+
+Activity Delay
+
+↓
+
+Material Shortage
+
+↓
+
+Purchase Order Delay
+
+↓
+
+Commercial Approval Delay
+
+↓
+
+Technical Evaluation Delay
+
+↓
+
+Engineering Specification Revision
+
+↓
+
+Project Decision
+
+Similarly,
+
+Construction Delay
+
+↓
+
+Activity Delay
+
+↓
+
+RFC Pending
+
+↓
+
+Engineering Review
+
+↓
+
+Consultant Comments
+
+↓
+
+Vendor Revision
+
+↓
+
+Root Cause
+
+Similarly,
+
+Construction Delay
+
+↓
+
+Activity
+
+↓
+
+Statutory Approval Pending
+
+↓
+
+PreCon360
+
+↓
+
+Land Acquisition
+
+↓
+
+Root Cause
+
+This enterprise traceability forms the conceptual foundation for future AI-assisted diagnostics.
+
+---
+
+# 13.8 Business Ownership
+
+Ownership changes throughout the lifecycle.
+
+Examples:
+
+- Business Development → Project Initiation
+- Project Manager → Planning
+- Engineering Team → Engineering
+- Procurement Team → Procurement
+- Package Owner → Construction
+- PMO / Management → Progress Monitoring
+
+Ownership transfer does not imply loss of historical accountability.
+
+---
+
+# 13.9 Enterprise Execution Principles
+
+The enterprise follows the following principles:
+
+- Business drives systems.
+- Every business object has one System of Record.
+- Every major decision follows governance.
+- Progress is always measured against a baseline.
+- Construction consumes approved engineering.
+- Procurement follows technical evaluation.
+- Executive reporting is based on validated enterprise data.
+- Cross-domain dependencies are explicit and traceable.
+
+---
+
+# 13.10 Chapter Summary
+
+The preceding chapters describe individual business domains.
+
+This chapter establishes how those domains interact to deliver projects as a unified enterprise execution model.
+
+Together they form the Enterprise Knowledge Model and provide the foundation for ontology generation, knowledge graph construction and enterprise AI applications.
+
+
+
+# 14. Supporting Enterprise Domains
+
+## 14.1 Purpose
+
+The domains described in previous chapters represent the primary project execution lifecycle.
+
+In addition to these domains, several enterprise capabilities continuously support project execution. These supporting domains influence project performance, governance and decision making but are not themselves sequential lifecycle stages.
+
+The current document captures their business purpose, interactions and enterprise significance. Detailed workflows for these domains will be documented after dedicated SME workshops.
+
+---
+
+# 14.2 Supporting Domain Overview
+
+The enterprise currently recognizes the following supporting domains:
+
+- Finance
+- Quality
+- Safety
+- Risk Management
+- Material Management
+- Commissioning
+- Asset Handover
+
+These domains interact continuously with Planning, Engineering, Procurement and Construction.
+
+---
+
+# 14.3 Finance
+
+## Purpose
+
+Finance governs financial planning, budget allocation, accounting recognition, cash flow management and financial reporting throughout the project lifecycle.
+
+Finance establishes the financial controls necessary to ensure that projects remain within approved investment limits.
+
+---
+
+## Major Business Responsibilities
+
+Finance supports:
+
+- CAPEX Budget Loading
+- Annual Operating Plan (AOP)
+- Commitment Monitoring
+- CAPEX Booking
+- Cash Flow Monitoring
+- Budget Utilization
+- Financial Forecasting
+- Payment Processing
+
+---
+
+## Major Business Concepts
+
+Examples include:
+
+- Approved CAPEX
+- Budget
+- Commitment
+- CAPEX Booked
+- Cash Flow
+- GRN
+- SES
+- Invoice
+- Advance Payment
+- Estimated Cost at Completion (EAC/PAC)
+
+---
+
+## Primary Systems
+
+- SAP
+- CapExpert
+- Enterprise Dashboards
+
+---
+
+## Relationship with Other Domains
+
+Consumes:
+
+- Procurement
+- Construction
+- Material Management
+
+Provides:
+
+- Financial Progress
+- Cash Flow
+- Budget Status
+- Financial KPIs
+
+---
+
+## Knowledge Capture Status
+
+Enterprise concepts are well understood.
+
+Detailed accounting workflows require dedicated Finance SME discussions.
+
+---
+
+# 14.4 Quality
+
+## Purpose
+
+Quality ensures that materials, engineering deliverables and construction activities comply with enterprise technical specifications and contractual requirements.
+
+Quality is enforced throughout procurement, engineering and construction.
+
+---
+
+## Major Responsibilities
+
+Typical responsibilities include:
+
+- Vendor Quality Assessment
+- Factory Inspection
+- Material Inspection
+- Dispatch Clearance
+- Site Inspection
+- Construction Quality Verification
+- NCR Management
+
+---
+
+## Major Business Concepts
+
+Examples include:
+
+- Inspection
+- Acceptance Criteria
+- Factory Acceptance
+- Site Acceptance
+- NCR
+- Rework
+- Vendor Quality Rating
+
+---
+
+## Relationship with Other Domains
+
+Engineering
+
+↓
+
+Approved Drawings
+
+↓
+
+Procurement
+
+↓
+
+Material Supply
+
+↓
+
+Quality Inspection
+
+↓
+
+Construction
+
+Quality therefore spans the complete execution lifecycle.
+
+---
+
+## Knowledge Capture Status
+
+High-level business understanding available.
+
+Detailed workflows require Quality SME sessions.
+
+---
+
+# 14.5 Safety
+
+## Purpose
+
+Safety governs safe execution of all project activities.
+
+Safety monitoring occurs primarily at site level and is integrated into construction governance.
+
+---
+
+## Major Business Concepts
+
+Typical observations include:
+
+- Permit to Work
+- Safety Observation
+- Near Miss
+- Incident
+- Lost Time Injury (LTI)
+- Fatality
+- Safety Training
+- PPE Compliance
+- Safety Audit
+
+---
+
+## Relationship with Construction
+
+Safety accompanies every construction activity.
+
+Major incidents may directly influence project execution and schedule performance.
+
+Future enterprise reasoning should evaluate whether safety events contribute to schedule delays.
+
+---
+
+## Knowledge Capture Status
+
+Business concepts identified.
+
+Detailed operational workflow pending.
+
+---
+
+# 14.6 Risk Management
+
+## Purpose
+
+Risk Management identifies, monitors and mitigates project risks throughout execution.
+
+---
+
+## Major Concepts
+
+Examples include:
+
+- Risk Register
+- Issue Register
+- Probability
+- Impact
+- Mitigation
+- Owner
+- Status
+
+---
+
+## Relationship with Other Domains
+
+Risks may originate from:
+
+- Planning
+- Engineering
+- Procurement
+- Construction
+- Finance
+- External Factors
+
+Risk therefore operates as a cross-cutting governance capability.
+
+---
+
+## Knowledge Capture Status
+
+Only conceptual understanding currently available.
+
+Dedicated SME discussions required.
+
+---
+
+# 14.7 Material Management
+
+## Purpose
+
+Material Management governs inventory after procurement and before construction consumption.
+
+---
+
+## Major Responsibilities
+
+Typical lifecycle includes:
+
+Purchase Order
+
+↓
+
+Material Delivery
+
+↓
+
+Goods Receipt (GRN)
+
+↓
+
+Inventory
+
+↓
+
+Issue to Contractor
+
+↓
+
+Consumption
+
+↓
+
+Reconciliation
+
+---
+
+## Major Business Concepts
+
+Examples include:
+
+- Inventory
+- GRN
+- Material Issue
+- Free Issue Material
+- Reconciliation
+- Stock
+- Material Availability
+
+---
+
+## Relationship with Other Domains
+
+Receives:
+
+- Procurement
+
+Supports:
+
+- Construction
+
+Provides:
+
+- Finance
+
+---
+
+## Knowledge Capture Status
+
+Conceptual understanding available.
+
+Detailed warehouse and inventory workflows remain to be documented.
+
+---
+
+# 14.8 Commissioning
+
+## Purpose
+
+Commissioning validates that constructed facilities perform according to engineering specifications and contractual guarantees.
+
+Commissioning represents the transition from project execution to operational readiness.
+
+---
+
+## Major Business Concepts
+
+Typical concepts include:
+
+- Mechanical Completion
+- Testing
+- Trial Run
+- Performance Guarantee Test
+- Acceptance
+- Liquidated Damages
+- Performance Verification
+
+---
+
+## Relationship with Other Domains
+
+Consumes:
+
+- Engineering
+- Construction
+
+Produces:
+
+- Operational Asset
+- Performance Validation
+
+---
+
+## Knowledge Capture Status
+
+High-level understanding available.
+
+Detailed commissioning lifecycle pending.
+
+---
+
+# 14.9 Asset Handover
+
+Asset Handover represents the formal transfer of completed project assets from the project organization to operations.
+
+Typical activities include:
+
+- Final Documentation
+- As-Built Records
+- Material Reconciliation
+- Contract Closure
+- Project Closure
+
+This domain will be documented in future versions.
+
+---
+
+# 14.10 Supporting Domain Summary
+
+Supporting domains continuously influence project execution but are governed independently of the primary project lifecycle.
+
+Future releases of the Enterprise Knowledge Model will expand these domains into standalone specifications following detailed SME workshops.
+
+
+# 16. Enterprise System Landscape
+
+## 16.1 Purpose
+
+The Enterprise System Landscape defines the digital ecosystem supporting the enterprise project lifecycle.
+
+Each enterprise application is responsible for a specific business capability. Collectively, these systems enable project governance, execution, monitoring and reporting.
+
+This chapter focuses on **business ownership of information**, rather than technical architecture or integrations.
+
+---
+
+# 16.2 Enterprise Digital Landscape
+
+The enterprise project lifecycle is supported by the following core applications:
+
+| System | Primary Business Capability |
+|---------|-----------------------------|
+| CapExpert | Project Initiation & CAPEX Governance |
+| Primavera P6 | Planning & Schedule Management |
+| PreCon360 | Pre-Construction Readiness |
+| Autodesk CDE | Engineering Document Management |
+| SAP Ariba | Procurement Lifecycle |
+| SAP ERP | Financials, Procurement Execution & Inventory |
+| Enterprise Data Lake | Enterprise Data Integration |
+| Enterprise Dashboards | Analytics & Executive Reporting |
+
+Each application owns a distinct business capability while contributing data to enterprise reporting.
+
+---
+
+# 16.3 CapExpert
+
+## Purpose
+
+CapExpert is the enterprise application used for capital investment planning and approval.
+
+It acts as the entry point for the project lifecycle.
+
+---
+
+### Primary Business Responsibilities
+
+- CAPEX NFA creation
+- CAPEX amendment management
+- Project information
+- Financial baseline
+- CAPEX planning
+- CAPEX breakdown
+- Initial project milestones
+- Pre-Construction checklist
+- Approval workflow
+
+---
+
+### Major Business Objects
+
+- Project
+- CAPEX NFA
+- Amendment NFA
+- CAPEX Plan
+- Financial Metrics
+- Pre-Construction Baseline
+
+---
+
+### Downstream Consumers
+
+- Primavera
+- PreCon360
+- SAP
+- Enterprise Data Lake
+- Dashboards
+
+---
+
+# 16.4 Primavera P6
+
+## Purpose
+
+Primavera is the enterprise planning and schedule management platform.
+
+It serves as the authoritative source for project schedules and physical progress.
+
+---
+
+### Primary Business Responsibilities
+
+- WBS
+- Activities
+- Baselines
+- Calendars
+- Critical Path
+- Float
+- Resources
+- Progress
+
+---
+
+### Major Business Objects
+
+- Schedule
+- WBS
+- Activity
+- Baseline
+- Milestone
+- Calendar
+
+---
+
+### Downstream Consumers
+
+- Construction
+- Enterprise Dashboards
+- Data Lake
+
+---
+
+# 16.5 PreCon360
+
+## Purpose
+
+PreCon360 manages project readiness before major execution begins.
+
+It operationalizes the Pre-Construction baseline established during Project Initiation.
+
+---
+
+### Primary Business Responsibilities
+
+- Readiness monitoring
+- Land acquisition
+- Statutory approvals
+- Pending ownership
+- Forecast dates
+- Supporting documents
+
+---
+
+### Major Business Objects
+
+- Pre-Construction Activity
+- Statutory Approval
+- Land Status
+- Readiness Status
+
+---
+
+### Relationship with Primavera
+
+PreCon360 complements Primavera.
+
+Primavera manages schedule execution.
+
+PreCon360 manages readiness metadata and operational ownership.
+
+---
+
+# 16.6 Autodesk CDE
+
+## Purpose
+
+Autodesk serves as the enterprise engineering document management platform.
+
+---
+
+### Primary Business Responsibilities
+
+- Engineering document management
+- MDL management
+- Review workflow
+- Revision control
+- Transmittals
+- Common Data Environment
+
+---
+
+### Major Business Objects
+
+- Engineering Document
+- Revision
+- Review Comment
+- MDL
+- RFC/GFC
+
+---
+
+### Downstream Consumers
+
+- Engineering
+- Construction
+- Enterprise Dashboards
+
+---
+
+# 16.7 SAP Ariba
+
+## Purpose
+
+SAP Ariba manages the procurement lifecycle.
+
+---
+
+### Primary Business Responsibilities
+
+- Procurement events
+- RFP
+- Vendor participation
+- Commercial evaluation
+- Commercial NFA
+
+---
+
+### Major Business Objects
+
+- RFP
+- Vendor Bid
+- Commercial NFA
+- Vendor Response
+
+---
+
+### Relationship with SAP
+
+Commercial approvals in Ariba result in Purchase Orders created within SAP.
+
+---
+
+# 16.8 SAP ERP
+
+## Purpose
+
+SAP ERP is the enterprise transactional system for project execution and financial accounting.
+
+It acts as the primary system of record for procurement execution, financial postings and inventory.
+
+---
+
+### Primary Business Responsibilities
+
+- Project Definition
+- WBS
+- Purchase Requests
+- Purchase Orders
+- Service Orders
+- Goods Receipt Notes
+- Service Entry Sheets
+- Inventory
+- CAPEX Booking
+- Cash Flow
+- Payments
+
+---
+
+### Major Business Objects
+
+- PR
+- PO
+- SO
+- GRN
+- SES
+- Invoice
+- Budget
+- Commitment
+- Inventory
+
+---
+
+### Downstream Consumers
+
+- Finance
+- Data Lake
+- Dashboards
+
+---
+
+# 16.9 Enterprise Data Lake
+
+## Purpose
+
+The Enterprise Data Lake acts as the enterprise integration layer.
+
+It consolidates business information from multiple operational systems into a unified analytical repository.
+
+---
+
+### Primary Responsibilities
+
+- Data ingestion
+- Enterprise integration
+- Historical storage
+- Analytical datasets
+- Cross-domain reporting
+
+---
+
+### Primary Data Sources
+
+- CapExpert
+- Primavera
+- PreCon360
+- Autodesk
+- Ariba
+- SAP
+
+---
+
+# 16.10 Enterprise Dashboards
+
+## Purpose
+
+Enterprise Dashboards provide consolidated project visibility for operational teams and executive management.
+
+Dashboards consume integrated information from the Enterprise Data Lake rather than directly from operational systems.
+
+---
+
+### Typical Dashboard Categories
+
+- Portfolio Dashboard
+- Planning Dashboard
+- Pre-Construction Dashboard
+- Engineering Dashboard
+- Procurement Dashboard
+- Construction Dashboard
+- Financial Dashboard
+- Executive Dashboard
+
+---
+
+### Typical Consumers
+
+- Project Teams
+- PMO
+- Business Leadership
+- Executive Management
+- Chairman Reviews
+
+---
+
+# 16.11 Enterprise Integration Principles
+
+The enterprise follows the following integration principles:
+
+### Principle 1
+
+Operational systems own business transactions.
+
+---
+
+### Principle 2
+
+The Data Lake consolidates enterprise information.
+
+---
+
+### Principle 3
+
+Dashboards consume curated analytical datasets.
+
+---
+
+### Principle 4
+
+Business processes span multiple systems.
+
+No individual application owns the complete project lifecycle.
+
+---
+
+### Principle 5
+
+Business reasoning must traverse systems rather than remaining confined to one application.
+
+---
+
+# 16.12 Cross-System Information Flow
+
+```text
+CapExpert
+      │
+      ▼
+Primavera
+      │
+      ▼
+PreCon360
+      │
+      ▼
+Autodesk
+      │
+      ▼
+Ariba
+      │
+      ▼
+SAP
+      │
+      ▼
+Enterprise Data Lake
+      │
+      ▼
+Enterprise Dashboards
+```
+
+This represents the conceptual business information flow.
+
+Actual integrations may vary based on implementation architecture.
+
+---
+
+# 16.13 System of Record Principles
+
+Each major business object should have a clearly identifiable System of Record.
+
+Examples:
+
+| Business Object | Primary System |
+|-----------------|----------------|
+| CAPEX NFA | CapExpert |
+| Schedule | Primavera |
+| Pre-Construction Activity | PreCon360 |
+| Engineering Document | Autodesk |
+| Procurement Event | Ariba |
+| Purchase Order | SAP |
+| Financial Posting | SAP |
+| Dashboard KPI | Enterprise Data Lake |
+
+Where multiple systems contain the same information, one system shall be recognized as the authoritative source.
+
+---
+
+# 16.14 Chapter Summary
+
+The Enterprise System Landscape establishes the ownership boundaries of enterprise applications.
+
+It clarifies:
+
+- Which business capability each system supports.
+- Which business objects each system governs.
+- How information flows across the enterprise.
+- How analytical reporting is constructed.
+
+This understanding forms the basis for enterprise data governance, ontology mapping and AI-assisted reasoning across multiple systems.
+# 17. Enterprise Governance & Business Rules
+
+## 17.1 Purpose
+
+Enterprise Governance establishes the decision-making framework through which capital projects are approved, planned, executed, monitored and controlled.
+
+While individual business domains maintain their own operational workflows, governance provides the common enterprise controls that ensure consistency, accountability and compliance.
+
+This chapter captures governance principles that apply across the complete project lifecycle.
+
+---
+
+# 17.2 Governance Philosophy
+
+The enterprise follows the following governance principles:
+
+- Every project shall have formal approval.
+- Every significant business decision shall be traceable.
+- Every major business object shall have a defined owner.
+- Every lifecycle stage shall have measurable outputs.
+- Enterprise standards shall be followed wherever defined.
+- Business Units may extend enterprise standards without violating them.
+
+Governance exists to enable controlled execution rather than to restrict business operations.
+
+---
+
+# 17.3 Governance Layers
+
+Enterprise governance operates at multiple levels.
+
+## Investment Governance
+
+Purpose:
+
+Approve capital investment.
+
+Primary Objects:
+
+- CAPEX NFA
+- CAPEX Amendment NFA
+
+Primary Authority:
+
+Delegation of Authority (DOA/TOA)
+
+---
+
+## Planning Governance
+
+Purpose:
+
+Approve the execution strategy.
+
+Primary Objects:
+
+- Primavera Schedule
+- Schedule Baseline
+- Milestones
+
+Primary Review Bodies:
+
+- Project Management Team
+- PMAT
+- CPMAT
+
+---
+
+## Engineering Governance
+
+Purpose:
+
+Ensure engineering deliverables meet enterprise standards.
+
+Primary Objects:
+
+- MDL
+- Engineering Documents
+- RFC / GFC Drawings
+- Review Comments
+
+Primary Participants:
+
+- Engineering Team
+- Consultant
+- Document Controller
+
+---
+
+## Procurement Governance
+
+Purpose:
+
+Ensure transparent and competitive procurement.
+
+Primary Objects:
+
+- PR
+- RFP
+- TBER
+- Commercial NFA
+- PO / SO
+
+Primary Participants:
+
+- Procurement Team
+- Engineering
+- Estimation Team
+
+---
+
+## Construction Governance
+
+Purpose:
+
+Ensure controlled site execution.
+
+Primary Objects:
+
+- DPR
+- WPR
+- Progress Updates
+- Construction Milestones
+
+Primary Participants:
+
+- Package Owner
+- Site Team
+- Contractor
+
+---
+
+## Executive Governance
+
+Purpose:
+
+Provide portfolio-level oversight.
+
+Typical Reviews:
+
+- Weekly Reviews
+- Monthly Reviews
+- Executive Reviews
+- Chairman / Promoter Reviews (where applicable)
+
+Primary Inputs:
+
+- Dashboards
+- KPIs
+- Progress Reports
+- Risk Registers
+- Financial Performance
+
+---
+
+# 17.4 Enterprise Ownership Principles
+
+Every significant business object shall have a clearly identified business owner.
+
+Typical ownership includes:
+
+| Business Object | Primary Business Owner |
+|-----------------|------------------------|
+| Project | Project Manager / Chief Project Officer |
+| CAPEX NFA | Business Initiator |
+| Primavera Schedule | Scheduler / Planning Team |
+| Engineering Package | Engineering Team |
+| Procurement Package | Procurement Team |
+| Construction Package | Package Owner |
+| Engineering Document | Engineering Vendor (Author) / Owner Engineering (Approval) |
+| Purchase Order | Procurement |
+| Inventory | Stores / Material Management |
+| Dashboard | Business Function / PMO |
+
+Ownership defines accountability rather than exclusive system access.
+
+---
+
+# 17.5 Enterprise Approval Principles
+
+The enterprise follows layered approval mechanisms.
+
+Examples include:
+
+- CAPEX Approval
+- Baseline Approval
+- Commercial Approval
+- Engineering Approval
+- Document Approval
+- Amendment Approval
+
+Approval paths are determined by:
+
+- Business Unit
+- Approval Type
+- Delegation of Authority
+- Monetary Thresholds
+
+---
+
+# 17.6 Baseline Governance
+
+Enterprise performance is measured only against approved baselines.
+
+Typical baselines include:
+
+- Financial Baseline
+- CAPEX Baseline
+- Schedule Baseline
+- Engineering Baseline (MDL)
+- Annual Operating Plan
+
+Changes to approved baselines require formal governance.
+
+---
+
+# 17.7 Standardization Principles
+
+The enterprise standardizes selected business structures.
+
+Examples include:
+
+- CAPEX Breakdown (up to defined levels)
+- WBS (up to enterprise-defined levels)
+- Pre-Construction Checklist
+- Engineering Review Workflow
+- Procurement Governance
+
+Business Units may extend these structures below the standardized level.
+
+---
+
+# 17.8 Cross-System Governance
+
+Business processes span multiple enterprise systems.
+
+Governance therefore applies across systems rather than within a single application.
+
+Example:
+
+```text
+CAPEX Approval
+      │
+      ▼
+Planning
+      │
+      ▼
+Engineering
+      │
+      ▼
+Procurement
+      │
+      ▼
+Construction
+```
+
+Each transition is governed through approved business artifacts.
+
+---
+
+# 17.9 Enterprise Business Rules
+
+The following enterprise-wide rules apply irrespective of domain.
+
+### GBR-001
+
+Every project shall originate from an approved CAPEX NFA.
+
+---
+
+### GBR-002
+
+Every project shall belong to one owning Business Unit.
+
+---
+
+### GBR-003
+
+Every project shall maintain an approved execution schedule.
+
+---
+
+### GBR-004
+
+Construction shall use only approved engineering deliverables.
+
+---
+
+### GBR-005
+
+Procurement shall follow technical evaluation before commercial evaluation.
+
+---
+
+### GBR-006
+
+Every Purchase Order shall be traceable to an approved procurement process.
+
+---
+
+### GBR-007
+
+Progress shall always be measured against an approved baseline.
+
+---
+
+### GBR-008
+
+Financial Progress and Cash Flow shall be treated as separate business concepts.
+
+---
+
+### GBR-009
+
+Every engineering document shall maintain revision history.
+
+---
+
+### GBR-010
+
+Every major business object shall have a clearly identified System of Record.
+
+---
+
+### GBR-011
+
+Business decisions shall remain traceable throughout the project lifecycle.
+
+---
+
+### GBR-012
+
+Enterprise dashboards shall consume validated enterprise data.
+
+---
+
+### GBR-013
+
+Business terminology shall remain consistent across systems.
+
+---
+
+# 17.10 Governance Exceptions
+
+The enterprise recognizes that certain historical or business-specific scenarios may not fully conform to current standards.
+
+Examples include:
+
+- Legacy projects with offline CAPEX approvals.
+- Historical SAP WBS structures not aligned with enterprise standards.
+- Exceptional procurement approaches where reverse auctions are not applicable.
+- Business-specific package hierarchies.
+- Manual operational tracking through spreadsheets where enterprise systems are not yet implemented.
+
+Such exceptions should be documented and governed rather than treated as standard practice.
+
+---
+
+# 17.11 Governance for AI and Analytics
+
+To support enterprise AI and analytics initiatives:
+
+- Business definitions shall take precedence over system terminology.
+- AI reasoning shall follow business dependencies rather than application boundaries.
+- Every KPI shall be traceable to its originating business objects.
+- Root-cause analysis shall traverse upstream dependencies until the originating business event is identified.
+- Derived insights shall reference authoritative business data.
+
+These principles ensure that future AI assistants provide explanations consistent with enterprise governance.
+
+---
+
+# 17.12 Chapter Summary
+
+Enterprise Governance provides the common control framework across the complete project lifecycle.
+
+Together with the lifecycle domains, entity landscape and system landscape, it establishes a consistent enterprise operating model that supports governance, analytics, knowledge management and AI-driven decision support.
+
+---
+
+# Appendix A – Enterprise Project Lifecycle (Quick Reference)
+
+```text
+Business Opportunity
+        │
+        ▼
+Project Initiation
+        │
+        ▼
+CAPEX NFA Approval
+        │
+        ▼
+Planning (Primavera)
+        │
+        ▼
+Pre-Construction (PreCon360)
+        │
+        ├───────────────┐
+        ▼               ▼
+Engineering         Procurement
+ (Autodesk)          (Ariba/SAP)
+        │               │
+        └───────┬───────┘
+                ▼
+          Construction
+                │
+                ▼
+      Progress Measurement
+                │
+                ▼
+ Executive Governance & Dashboards
+```
+
+
+Future revisions should extend the model while preserving the business principles and governance framework defined in this document.
+
+This establishes the foundation. The next part will begin with Chapter 6 – Project Initiation, where we'll document the CAPEX/NFA process in full detail, including processes, entities, systems, business rules, exceptions, and cross-domain dependencies. This is where the enterprise-specific knowledge begins.

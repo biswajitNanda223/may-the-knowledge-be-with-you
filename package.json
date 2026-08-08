@@ -1,0 +1,23 @@
+{
+  "name": "may-the-knowledge-be-with-you",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "concurrently -n api,web -c cyan,magenta \"npm run dev -w @mtkbwy/api\" \"npm run dev -w @mtkbwy/web\"",
+    "build": "npm run build -w @mtkbwy/api && npm run build -w @mtkbwy/web",
+    "test": "npm run test -w @mtkbwy/api && npm run test -w @mtkbwy/web",
+    "lint": "npm run typecheck -ws --if-present",
+    "seed": "npm run seed -w @mtkbwy/api",
+    "env:run": "dotenvx run --",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down"
+  },
+  "devDependencies": {
+    "@dotenvx/dotenvx": "^1.49.0",
+    "concurrently": "^9.2.0",
+    "typescript": "^5.9.2"
+  },
+  "engines": { "node": ">=22" }
+}
+
