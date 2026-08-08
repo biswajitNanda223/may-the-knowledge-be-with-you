@@ -1,41 +1,114 @@
 # High-level design
 
-## Context
+## System purpose
 
-Platform answers enterprise questions from normalized Neo4j ontology while showing exact retrieval evidence. Three UI surfaces: live chat/evidence, paginated explorer, production architecture.
+Platform answers enterprise questions from normalized Neo4j ontology, streams grounded responses, displays exact evidence, supports bounded graph exploration, imports governed sources, and exposes Google ADK-only telemetry.
+
+## System context
 
 ```mermaid
 flowchart LR
-  U[Enterprise user] --> W[React TypeScript]
-  W -->|POST + SSE| F[Fastify replicas]
-  W -->|cursor REST| F
-  F --> R[Retrieval + trace service]
-  F --> A[Google ADK strategy]
-  R --> N[(Neo4j Aura)]
-  A --> G[Gemini]
-  F -. production .-> C[(Redis)]
-  A -. ADK spans only .-> O[OpenTelemetry]
+  User[Enterprise user]
+  IdP[Enterprise IdP]
+  Platform[Knowledge platform]
+  Aura[(Neo4j Aura)]
+  Gemini[Gemini API]
+  TraceBackend[Approved trace backend]
+
+  User -->|HTTPS| Platform
+  Platform -. future OIDC .-> IdP
+  Platform -->|Encrypted Bolt| Aura
+  Platform -->|Google ADK| Gemini
+  Platform -->|ADK spans only| TraceBackend
 ```
 
-## Runtime flow
+## Container architecture
 
-1. Browser sends question and conversation ID.
-2. Fastify validates/rate-limits request and assigns request/trace IDs.
-3. Retrieval runs bounded parameterized Cypher. Returned nodes/edges form immutable evidence envelope.
-4. SSE sends `trace` immediately. React renders evidence subgraph.
-5. Same evidence enters ADK prompt. No autonomous write/query tool is exposed.
-6. SSE sends `token`, then `complete`. Audit sink stores query template ID, parameters hash, result IDs, timing and actor.
+```mermaid
+flowchart TB
+  subgraph Browser[React TypeScript application]
+    Chat[Page 1: Chat and evidence]
+    Explorer[Page 2: Graph explorer]
+    Ops[Page 3: Architecture and ingestion]
+    Telemetry[Page 4: ADK telemetry]
+    Canvas[Cytoscape graph canvas]
+    Chat --> Canvas
+    Explorer --> Canvas
+  end
+
+  subgraph API[Fastify TypeScript replicas]
+    Routes[Route factory]
+    Graph[Graph service]
+    Agent[Agent strategy factory]
+    ADK[Google ADK strategy]
+    Importer[Ontology importer]
+    AgentTrace[ADK telemetry service]
+    Routes --> Graph
+    Routes --> Agent
+    Agent --> ADK
+    Routes --> Importer
+    Routes --> AgentTrace
+  end
+
+  Neo4j[(Neo4j local or Aura)]
+  Gemini[Gemini]
+  Collector[OTel Collector: traces only]
+  Backend[Trace backend]
+
+  Browser -->|REST and SSE| Routes
+  Graph --> Neo4j
+  Importer --> Neo4j
+  ADK --> Gemini
+  ADK --> AgentTrace
+  AgentTrace -->|OTLP HTTP| Collector
+  Collector --> Backend
+```
+
+## Deployment topology
+
+```mermaid
+flowchart LR
+  Client[Browser] --> Edge[WAF / CDN / ingress]
+  Edge --> Web[Static React assets]
+  Edge --> LB[API load balancer]
+  LB --> API1[Fastify pod 1]
+  LB --> API2[Fastify pod 2]
+  LB --> APIN[Fastify pod N]
+  API1 --> Aura[(Neo4j Aura)]
+  API2 --> Aura
+  APIN --> Aura
+  API1 --> Gemini[Gemini API]
+  API2 --> Gemini
+  APIN --> Gemini
+  API1 -. ADK spans .-> OTel[OTel Collector]
+  API2 -. ADK spans .-> OTel
+  APIN -. ADK spans .-> OTel
+  OTel --> Trace[Enterprise trace backend]
+  LB -. future distributed limits .-> Redis[(Redis)]
+```
+
+## Primary answer flow
+
+1. Browser sends question and optional conversation ID.
+2. Fastify validates, rate-limits, and assigns correlation/trace IDs.
+3. Graph retrieval executes bounded parameterized Cypher.
+4. API emits `trace` SSE event containing exact evidence nodes and edges.
+5. Same evidence enters Google ADK/Gemini prompt.
+6. API emits `token` events, followed by `complete` or `error`.
+7. ADK telemetry records only model, counts, duration, status, and errors.
 
 ## Scale boundaries
 
-- Fastify is stateless. Scale horizontally behind managed ingress.
-- One process-wide Neo4j driver; bounded pool. Never create driver per request.
-- Graph explorer uses opaque keyset cursor and max 100 nodes/page.
-- Node expansion is progressive with edge/depth/result caps.
-- Redis is optional locally; production uses it for distributed rate limits, short-lived trace replay and idempotency.
-- OpenTelemetry scope is limited to Google ADK agent runs; generic HTTP/process telemetry is excluded.
-- Aura Free is demo-only. Production tier choice must meet HA, restore, private networking, capacity and support requirements.
+- Fastify request processing is stateless and horizontally scalable.
+- One process-wide Neo4j driver uses bounded connection pooling.
+- Explorer uses opaque keyset cursors and hard page limits.
+- Expansion is progressive; full-graph download is not supported.
+- ADK dashboard read model is process-local and capped at 200 runs. Production trace history belongs in approved OTLP backend.
+- Redis is future production infrastructure for distributed rate limits and idempotency.
+- Aura Free suits demos; industrial use requires tier selection based on HA, restore, private networking, capacity, and support.
 
 ## Trust boundaries
 
-Frontend never receives Neo4j/Gemini credentials or raw Cypher. Backend derives tenant from verified OIDC claims, applies label/property policy, uses read-only Neo4j identity for query traffic, separate importer identity for ingestion.
+Frontend never receives Gemini/Neo4j credentials, raw Cypher, prompt telemetry, or graph properties in telemetry. Production must derive tenant and role policy from verified OIDC claims. Read traffic and ingestion must use separate Neo4j identities.
+
+See [diagram catalog](DIAGRAMS.md), [LLD](LLD.md), and [production plan](PRODUCTION.md).

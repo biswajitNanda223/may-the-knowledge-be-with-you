@@ -71,6 +71,7 @@ observability/   ADK-only OTLP collector configuration
 data/raw/        versioned source inputs
 docs/HLD.md      boundaries and end-to-end flow
 docs/LLD.md      APIs, classes, data model, failure behavior
+docs/DIAGRAMS.md sequence, deployment, data, security, telemetry diagrams
 docs/PRODUCTION.md security, scaling, observability, rollout
 ```
 
@@ -78,6 +79,7 @@ docs/PRODUCTION.md security, scaling, observability, rollout
 
 - [HLD](docs/HLD.md)
 - [LLD](docs/LLD.md)
+- [Architecture diagrams](docs/DIAGRAMS.md)
 - [Production readiness](docs/PRODUCTION.md)
 - [Pagination decision](docs/ADR-001-pagination.md)
 - [Original prompt compliance audit](docs/PROMPT-COMPLIANCE.md)
