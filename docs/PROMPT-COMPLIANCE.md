@@ -20,6 +20,7 @@ Audited against repository state on 2026-08-08.
 | dotenvx, one committed env | Done | Encrypted `.env`; `.env.keys` local only |
 | HLD, LLD, production documentation | Done | `docs/` |
 | ADK agent telemetry | Done | Page 4 + bounded run API + ADK-only OTLP spans |
+| Prisma/PostgreSQL audit persistence | Done | Durable conversations and evidence trace records; excluded from observability UI |
 | Husky pre-commit | Done | Typecheck → tests → SAST/secret scan |
 | CI SAST | Done | CodeQL + dependency audit workflow |
 | Enterprise SSO/RBAC/tenant enforcement | Design only | Requires chosen IdP and tenant policy |

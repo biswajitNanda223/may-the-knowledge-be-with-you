@@ -42,17 +42,20 @@ flowchart TB
     Agent[Agent strategy factory]
     ADK[Google ADK strategy]
     Importer[Ontology importer]
+    Audit[Durable audit service]
     AgentTrace[ADK telemetry service]
     Routes --> Graph
     Routes --> Agent
     Agent --> ADK
     Routes --> Importer
+    Routes --> Audit
     Routes --> AgentTrace
   end
 
   Neo4j[(Neo4j local or Aura)]
   Gemini[Gemini]
   Collector[OTel Collector: traces only]
+  PostgreSQL[(PostgreSQL audit store)]
   Backend[Trace backend]
 
   Browser -->|REST and SSE| Routes
@@ -60,6 +63,7 @@ flowchart TB
   Importer --> Neo4j
   ADK --> Gemini
   ADK --> AgentTrace
+  Audit --> PostgreSQL
   AgentTrace -->|OTLP HTTP| Collector
   Collector --> Backend
 ```
@@ -80,6 +84,9 @@ flowchart LR
   API1 --> Gemini[Gemini API]
   API2 --> Gemini
   APIN --> Gemini
+  API1 --> AuditDB[(PostgreSQL audit)]
+  API2 --> AuditDB
+  APIN --> AuditDB
   API1 -. ADK spans .-> OTel[OTel Collector]
   API2 -. ADK spans .-> OTel
   APIN -. ADK spans .-> OTel
@@ -96,6 +103,7 @@ flowchart LR
 5. Same evidence enters Google ADK/Gemini prompt.
 6. API emits `token` events, followed by `complete` or `error`.
 7. ADK telemetry records only model, counts, duration, status, and errors.
+8. Prisma persists conversation, question, query-template ID, evidence IDs, and completion status as durable audit records. These records are not observability data and never feed Page 4.
 
 ## Scale boundaries
 
@@ -104,6 +112,7 @@ flowchart LR
 - Explorer uses opaque keyset cursors and hard page limits.
 - Expansion is progressive; full-graph download is not supported.
 - ADK dashboard read model is process-local and capped at 200 runs. Production trace history belongs in approved OTLP backend.
+- PostgreSQL audit data is durable business evidence with separate retention, access, and encryption policy.
 - Redis is future production infrastructure for distributed rate limits and idempotency.
 - Aura Free suits demos; industrial use requires tier selection based on HA, restore, private networking, capacity, and support.
 

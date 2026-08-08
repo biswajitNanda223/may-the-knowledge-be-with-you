@@ -12,6 +12,7 @@ Production-oriented enterprise ontology experience: React + TypeScript, Fastify 
 - Strategy-pattern agent (`adk`/`mock`) and factory-composed Fastify routes.
 - Docker images for API/web plus local Neo4j.
 - ADK-only OpenTelemetry traces plus dedicated frontend trace console.
+- Prisma/PostgreSQL durable conversation and evidence audit records, separate from observability.
 - Husky pre-commit gate plus security ESLint, secretlint and CI CodeQL.
 - OpenTelemetry auto-instrumentation, custom graph/chat metrics and local collector.
 
@@ -21,7 +22,8 @@ Requirements: Node 22+, npm 10+, Docker.
 
 ```bash
 npm install
-npm run env:run -- docker compose up -d neo4j otel-collector
+npm run env:run -- docker compose up -d neo4j postgres otel-collector
+npm run prisma:deploy
 npm run seed
 npm run dev
 ```
@@ -68,6 +70,7 @@ Create AuraDB Free, download credentials once, then set `NEO4J_URI=neo4j+s://...
 apps/api/        Fastify, ADK strategy, Neo4j retrieval/import
 apps/web/        React pages and shared Cytoscape renderer
 observability/   ADK-only OTLP collector configuration
+prisma/          durable PostgreSQL audit schema and migrations
 data/raw/        versioned source inputs
 docs/HLD.md      boundaries and end-to-end flow
 docs/LLD.md      APIs, classes, data model, failure behavior

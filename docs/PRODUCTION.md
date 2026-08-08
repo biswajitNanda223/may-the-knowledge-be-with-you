@@ -11,6 +11,7 @@
 7. Define SLOs: availability, first-token latency, complete latency, graph query p95, error rate. Alert on burn rate.
 8. Test backup restore, regional failure, Aura pause/resume, Gemini degradation and schema rollback.
 9. Route ADK-only OTLP spans through collector to approved trace backend.
+10. Run Prisma migrations once before API rollout; apply audit retention, encryption, backup, and restricted access policies.
 
 ## Commit and CI security gates
 

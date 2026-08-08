@@ -13,6 +13,8 @@ sequenceDiagram
   participant Graph as GraphService
   participant Neo4j
   participant Telemetry as ADK telemetry
+  participant Audit as Prisma audit service
+  participant PostgreSQL
   participant ADK as Google ADK
   participant Gemini
   participant OTel as OTel Collector
@@ -23,6 +25,8 @@ sequenceDiagram
   Graph->>Neo4j: Bounded parameterized Cypher
   Neo4j-->>Graph: Exact nodes and edges
   Graph-->>API: Evidence envelope
+  API->>Audit: Persist STARTED with evidence IDs
+  Audit->>PostgreSQL: INSERT conversation and graph trace
   API-->>UI: SSE trace
   API->>Telemetry: start + evidence counts
   API->>ADK: stream(question, evidence)
@@ -34,6 +38,8 @@ sequenceDiagram
     API-->>UI: SSE token
   end
   API->>Telemetry: complete
+  API->>Audit: Mark COMPLETED
+  Audit->>PostgreSQL: UPDATE graph trace
   Telemetry-->>OTel: google.adk.agent.run span
   API-->>UI: SSE complete
 ```
@@ -177,7 +183,28 @@ flowchart TD
   Export --> Complete
 ```
 
-## 8. Repository ownership map
+## 8. Audit versus observability separation
+
+```mermaid
+flowchart LR
+  Chat[Chat route]
+  Audit[Prisma audit service]
+  DB[(PostgreSQL)]
+  AgentTrace[ADK telemetry service]
+  Page4[Page 4 ADK telemetry]
+  OTel[OTel collector]
+  Backend[Trace backend]
+
+  Chat -->|question, template ID, evidence IDs, status| Audit
+  Audit -->|durable business record| DB
+  Chat -->|model, counts, duration, error| AgentTrace
+  AgentTrace -->|bounded live read model| Page4
+  AgentTrace -->|ADK span only| OTel
+  OTel --> Backend
+  DB -. never queried .-> Page4
+```
+
+## 9. Repository ownership map
 
 ```mermaid
 flowchart TB
@@ -186,6 +213,7 @@ flowchart TB
   Root --> Web[apps/web]
   Root --> Data[data/raw]
   Root --> Obs[observability]
+  Root --> Prisma[prisma]
   Root --> Docs[docs]
   API --> Agents[agents: strategy and ADK]
   API --> Routes[routes: transport]
@@ -195,6 +223,7 @@ flowchart TB
   Web --> Pages[pages: four screens]
   Web --> Components[components: GraphCanvas]
   Obs --> Collector[collector trace pipeline]
+  Prisma --> AuditSchema[audit schema and migrations]
   Docs --> HLD[HLD]
   Docs --> LLD[LLD]
   Docs --> Production[Production plan]

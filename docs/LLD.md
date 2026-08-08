@@ -12,18 +12,22 @@ classDiagram
   class AgentFactory { +createAgentStrategy() AgentStrategy }
   class OntologyImporter { +importOntology(path) ImportCounts }
   class AdkTelemetryService { +start(input) +evidence(traceId,evidence) +chunk(traceId,value) +complete(traceId) +fail(traceId,error) +snapshot() }
+  class AuditService { +start(input) +complete(traceId) +fail(traceId,errorCode) }
+  class PrismaClient { +conversation +graphTrace }
   class Neo4jDriver { +read(cypher,params) +write(cypher,params) }
 
   RouteFactory --> GraphService
   RouteFactory --> AgentFactory
   RouteFactory --> OntologyImporter
   RouteFactory --> AdkTelemetryService
+  RouteFactory --> AuditService
   AgentFactory --> AgentStrategy
   AgentStrategy <|.. AdkAgentStrategy
   AgentStrategy <|.. MockAgentStrategy
   GraphService --> Neo4jDriver
   OntologyImporter --> Neo4jDriver
   AdkAgentStrategy --> AdkTelemetryService
+  AuditService --> PrismaClient
 ```
 
 `registerRoutes` composes bounded Fastify plugins. Routes validate transport with Zod and delegate. `GraphService` owns approved Cypher templates and graph mapping. Agent factory selects real ADK or deterministic mock without changing transport.
@@ -121,6 +125,32 @@ stateDiagram-v2
 Telemetry starts only when `AGENT_STRATEGY=adk`. It never runs for mock strategy. OTLP span name is `google.adk.agent.run`. Attributes contain model, session ID, question character count, evidence counts, retrieval duration, output counts, total duration, and error status. Prompt text and graph properties are excluded.
 
 Recent-run dashboard state is capped at 200 entries per API process. It is operational convenience, not durable audit history.
+
+## Durable audit persistence
+
+Prisma/PostgreSQL is separate from observability. `Conversation` owns ordered `GraphTrace` records. Each trace persists question, approved query-template ID, exact evidence node/edge IDs, retrieval duration, status, timestamps, and safe error code. Page 4 never queries these tables. Production access requires restricted audit roles and retention controls.
+
+```mermaid
+erDiagram
+  CONVERSATION ||--o{ GRAPH_TRACE : contains
+  CONVERSATION {
+    uuid id PK
+    datetime createdAt
+    datetime updatedAt
+  }
+  GRAPH_TRACE {
+    uuid id PK
+    uuid conversationId FK
+    string question
+    string queryTemplate
+    string_array nodeIds
+    string_array edgeIds
+    int elapsedMs
+    string status
+    string errorCode
+    datetime completedAt
+  }
+```
 
 ## Frontend modules
 
