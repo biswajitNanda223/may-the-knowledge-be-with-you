@@ -16,9 +16,6 @@
     "docker:up": "dotenvx run -- docker compose up --build",
     "docker:down": "dotenvx run -- docker compose down",
     "prepare": "husky",
-    "prisma:generate": "prisma generate --schema prisma/schema.prisma",
-    "prisma:migrate": "dotenvx run -- prisma migrate dev --schema prisma/schema.prisma",
-    "prisma:deploy": "dotenvx run -- prisma migrate deploy --schema prisma/schema.prisma",
     "sast": "eslint apps/api/src apps/web/src --max-warnings=0 && secretlint \"**/*\"",
     "security:audit": "npm audit --omit=dev --audit-level=high",
     "precommit": "npm run lint && npm run test && npm run sast"
@@ -32,7 +29,6 @@
     "eslint-plugin-security": "^3.0.1",
     "globals": "^16.3.0",
     "husky": "^9.1.7",
-    "prisma": "^6.19.1",
     "secretlint": "^10.2.1",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.41.0",

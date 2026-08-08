@@ -10,7 +10,7 @@
 6. Export traces/metrics/logs through OpenTelemetry. Redact prompts, credentials and sensitive graph properties.
 7. Define SLOs: availability, first-token latency, complete latency, graph query p95, error rate. Alert on burn rate.
 8. Test backup restore, regional failure, Aura pause/resume, Gemini degradation and schema rollback.
-9. Run Prisma migrations as one deployment job before API rollout; never from every replica.
+9. Route ADK-only OTLP spans through collector to approved trace backend.
 
 ## Commit and CI security gates
 

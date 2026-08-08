@@ -19,12 +19,12 @@ Audited against repository state on 2026-08-08.
 | Docker frontend/backend | Done | Multi-stage API/web images |
 | dotenvx, one committed env | Done | Encrypted `.env`; `.env.keys` local only |
 | HLD, LLD, production documentation | Done | `docs/` |
-| Prisma | Done | PostgreSQL control-plane audit schema; not misused for Neo4j |
+| ADK agent telemetry | Done | Page 4 + bounded run API + ADK-only OTLP spans |
 | Husky pre-commit | Done | Typecheck → tests → SAST/secret scan |
 | CI SAST | Done | CodeQL + dependency audit workflow |
 | Enterprise SSO/RBAC/tenant enforcement | Design only | Requires chosen IdP and tenant policy |
 | Redis distributed rate limits/replay | Design only | Required before multiple API replicas |
-| OpenTelemetry exporter and dashboards | Design only | Required before production launch |
+| OpenTelemetry exporter and dashboard | Done for ADK only | Generic HTTP/process/infrastructure telemetry intentionally excluded |
 | Production Neo4j HA/private networking | Design only | Aura tier/infrastructure decision |
 
 ## Known dependency risk

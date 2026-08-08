@@ -13,9 +13,8 @@ flowchart LR
   F --> A[Google ADK strategy]
   R --> N[(Neo4j Aura)]
   A --> G[Gemini]
-  F --> P[(PostgreSQL audit store)]
   F -. production .-> C[(Redis)]
-  F -. telemetry .-> O[OpenTelemetry]
+  A -. ADK spans only .-> O[OpenTelemetry]
 ```
 
 ## Runtime flow
@@ -34,7 +33,7 @@ flowchart LR
 - Graph explorer uses opaque keyset cursor and max 100 nodes/page.
 - Node expansion is progressive with edge/depth/result caps.
 - Redis is optional locally; production uses it for distributed rate limits, short-lived trace replay and idempotency.
-- Prisma writes conversation/trace metadata to PostgreSQL; it does not abstract Neo4j.
+- OpenTelemetry scope is limited to Google ADK agent runs; generic HTTP/process telemetry is excluded.
 - Aura Free is demo-only. Production tier choice must meet HA, restore, private networking, capacity and support requirements.
 
 ## Trust boundaries

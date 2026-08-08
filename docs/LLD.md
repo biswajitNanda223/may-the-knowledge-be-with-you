@@ -4,8 +4,8 @@
 
 Factory `registerRoutes` assembles bounded plugins. Route handlers validate transport and delegate. `GraphService` owns Cypher and mapping. `createAgentStrategy` selects `AdkAgentStrategy` or deterministic `MockAgentStrategy`; agent swap does not touch chat transport.
 
-Prisma owns relational control-plane data only: conversations, trace lifecycle,
-exact evidence IDs, query-template ID and latency. Neo4j remains graph data plane.
+ADK telemetry owns a bounded recent-run read model and emits OTLP spans. It records
+model, evidence counts, output counts, duration and status—never prompt text or graph properties.
 
 ### APIs
 
@@ -16,6 +16,7 @@ exact evidence IDs, query-template ID and latency. Neo4j remains graph data plan
 | GET | `/v1/graph/nodes/:id/neighbors` | Progressive node expansion |
 | POST | `/v1/ingestion/files` | Multipart `.xlsx` import; `.txt` staged |
 | GET | `/health/live`, `/health/ready` | Process and Neo4j readiness |
+| GET | `/v1/telemetry/agent` | Google ADK run summary and bounded trace timeline |
 
 ### Normalized model
 
