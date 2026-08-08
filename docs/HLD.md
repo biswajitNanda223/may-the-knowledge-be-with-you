@@ -13,6 +13,7 @@ flowchart LR
   F --> A[Google ADK strategy]
   R --> N[(Neo4j Aura)]
   A --> G[Gemini]
+  F --> P[(PostgreSQL audit store)]
   F -. production .-> C[(Redis)]
   F -. telemetry .-> O[OpenTelemetry]
 ```
@@ -33,9 +34,9 @@ flowchart LR
 - Graph explorer uses opaque keyset cursor and max 100 nodes/page.
 - Node expansion is progressive with edge/depth/result caps.
 - Redis is optional locally; production uses it for distributed rate limits, short-lived trace replay and idempotency.
+- Prisma writes conversation/trace metadata to PostgreSQL; it does not abstract Neo4j.
 - Aura Free is demo-only. Production tier choice must meet HA, restore, private networking, capacity and support requirements.
 
 ## Trust boundaries
 
 Frontend never receives Neo4j/Gemini credentials or raw Cypher. Backend derives tenant from verified OIDC claims, applies label/property policy, uses read-only Neo4j identity for query traffic, separate importer identity for ingestion.
-

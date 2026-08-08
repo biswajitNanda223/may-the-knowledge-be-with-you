@@ -10,6 +10,13 @@
 6. Export traces/metrics/logs through OpenTelemetry. Redact prompts, credentials and sensitive graph properties.
 7. Define SLOs: availability, first-token latency, complete latency, graph query p95, error rate. Alert on burn rate.
 8. Test backup restore, regional failure, Aura pause/resume, Gemini degradation and schema rollback.
+9. Run Prisma migrations as one deployment job before API rollout; never from every replica.
+
+## Commit and CI security gates
+
+Husky pre-commit runs TypeScript checks, unit tests, security-focused ESLint and
+secretlint. CI repeats dependency audit and GitHub CodeQL. Hooks improve feedback;
+protected-branch CI remains enforcement because local hooks can be bypassed.
 
 ## Deployment stages
 
@@ -22,4 +29,3 @@ Load-test with realistic subgraph density and long-lived SSE. Track driver pool 
 ## Data governance
 
 Version source files, normalized schema and import run. Attach provenance and effective dates. Audit actor, tenant, conversation, trace, query-template ID and exact returned entity IDs. Set retention/deletion policy by classification.
-

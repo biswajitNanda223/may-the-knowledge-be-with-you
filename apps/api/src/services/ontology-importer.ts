@@ -1,12 +1,18 @@
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 import { write } from '../infra/neo4j.js';
 
 type Row = Record<string, string | number | undefined>;
 const text = (v: unknown) => v == null ? '' : String(v).trim();
-const rows = (book: XLSX.WorkBook, sheet: string): Row[] => XLSX.utils.sheet_to_json<Row>(book.Sheets[sheet]!, { defval: '' });
+const rows = (book: ExcelJS.Workbook, sheetName: string): Row[] => {
+  const sheet = book.getWorksheet(sheetName); if (!sheet) throw new Error(`Missing workbook sheet: ${sheetName}`);
+  const headers = (sheet.getRow(1).values as ExcelJS.CellValue[]).slice(1).map(text);
+  const result: Row[] = [];
+  sheet.eachRow((row, rowNumber) => { if (rowNumber === 1) return; const item: Row = {}; headers.forEach((header, index) => { item[header] = row.getCell(index + 1).text; }); result.push(item); });
+  return result;
+};
 
 export async function importOntology(path: string) {
-  const book = XLSX.readFile(path);
+  const book = new ExcelJS.Workbook(); await book.xlsx.readFile(path);
   const entities = rows(book, 'Entities').map(r => ({ id: text(r.Entity_ID), name: text(r.Entity_Name), category: text(r.Category), description: text(r.Description), owner: text(r.Owner), criticality: text(r.Criticality) })).filter(x => x.id);
   const relationships = rows(book, 'Relationships').map((r, i) => ({ id: `REL_${i + 1}`, from: text(r.From), to: text(r.To), type: text(r.Relationship).replace(/[^A-Za-z0-9_]/g, '_').toUpperCase(), cardinality: text(r.Cardinality), description: text(r.Description) })).filter(x => x.from && x.to);
   const processes = rows(book, 'Processes').map((r, i) => ({ id: `PROCESS_${i + 1}`, name: `${text(r.Process)} · ${text(r.Step)}`, process: text(r.Process), stepNo: Number(r.Step_No), nextStep: text(r.Next_Step), owner: text(r.Owner), description: text(r.Description) }));
@@ -24,4 +30,3 @@ export async function importOntology(path: string) {
   await write(`UNWIND $rows AS row MERGE (n:OntologyNode:GlossaryTerm {id:row.id}) SET n += row,n.source='ontology1.xlsx'`, { rows: glossary });
   return { entities: entities.length, relationships: relationships.length, processes: processes.length, systems: systems.length, rules: rules.length, glossary: glossary.length };
 }
-

@@ -7,7 +7,7 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run",
+    "test": "npm run build && node --test dist/**/*.test.js",
     "seed": "tsx src/scripts/seed.ts ../../data/raw/ontology1.xlsx"
   },
   "dependencies": {
@@ -16,16 +16,15 @@
     "@fastify/multipart": "^9.2.1",
     "@fastify/rate-limit": "^10.3.0",
     "@google/adk": "^1.6.0",
+    "@prisma/client": "^6.19.1",
+    "exceljs": "^4.4.0",
     "fastify": "^5.5.0",
     "neo4j-driver": "^5.28.2",
     "pino": "^9.9.0",
-    "xlsx": "^0.18.5",
     "zod": "^4.1.5"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
-    "tsx": "^4.20.5",
-    "vitest": "^3.2.4"
+    "tsx": "^4.20.5"
   }
 }
-

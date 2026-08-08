@@ -9,6 +9,8 @@ const schema = z.object({
   NEO4J_USERNAME: z.string().default('neo4j'),
   NEO4J_PASSWORD: z.string().default('local-development-password'),
   NEO4J_DATABASE: z.string().default('neo4j'),
+  DATABASE_URL: z.string().default('postgresql://knowledge:knowledge@localhost:5432/knowledge?schema=public'),
+  AUDIT_REQUIRED: z.string().default('false').transform(v => v === 'true'),
   GOOGLE_GENAI_API_KEY: z.string().optional(),
   GEMINI_MODEL: z.string().default('gemini-2.5-flash'),
   AGENT_STRATEGY: z.enum(['adk', 'mock']).default('mock'),
@@ -19,4 +21,3 @@ const schema = z.object({
 });
 export type AppConfig = z.infer<typeof schema>;
 export const config = schema.parse(process.env);
-

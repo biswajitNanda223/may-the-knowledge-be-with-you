@@ -10,6 +10,8 @@ Production-oriented enterprise ontology experience: React + TypeScript, Fastify 
 - Repeatable Excel → normalized Neo4j importer for all six `ontology1.xlsx` sheets.
 - Strategy-pattern agent (`adk`/`mock`) and factory-composed Fastify routes.
 - Docker images for API/web plus local Neo4j.
+- Prisma/PostgreSQL control plane for immutable conversation and trace metadata.
+- Husky pre-commit gate plus security ESLint, secretlint and CI CodeQL.
 
 ## Quick start
 
@@ -17,7 +19,8 @@ Requirements: Node 22+, npm 10+, Docker.
 
 ```bash
 npm install
-npm run env:run -- docker compose up -d neo4j
+npm run env:run -- docker compose up -d neo4j postgres
+npm run prisma:deploy
 npm run seed
 npm run dev
 ```
@@ -61,6 +64,7 @@ Create AuraDB Free, download credentials once, then set `NEO4J_URI=neo4j+s://...
 ```text
 apps/api/        Fastify, ADK strategy, Neo4j retrieval/import
 apps/web/        React pages and shared Cytoscape renderer
+prisma/          PostgreSQL audit/control-plane schema and migrations
 data/raw/        versioned source inputs
 docs/HLD.md      boundaries and end-to-end flow
 docs/LLD.md      APIs, classes, data model, failure behavior
@@ -73,3 +77,4 @@ docs/PRODUCTION.md security, scaling, observability, rollout
 - [LLD](docs/LLD.md)
 - [Production readiness](docs/PRODUCTION.md)
 - [Pagination decision](docs/ADR-001-pagination.md)
+- [Original prompt compliance audit](docs/PROMPT-COMPLIANCE.md)

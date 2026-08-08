@@ -4,6 +4,9 @@
 
 Factory `registerRoutes` assembles bounded plugins. Route handlers validate transport and delegate. `GraphService` owns Cypher and mapping. `createAgentStrategy` selects `AdkAgentStrategy` or deterministic `MockAgentStrategy`; agent swap does not touch chat transport.
 
+Prisma owns relational control-plane data only: conversations, trace lifecycle,
+exact evidence IDs, query-template ID and latency. Neo4j remains graph data plane.
+
 ### APIs
 
 | Method | Path | Contract |
@@ -32,4 +35,3 @@ Top-level browse orders by `(coalesce(name,id), id)` and cursor encodes last pai
 - Gemini failure: evidence already visible; SSE emits error, no fabricated answer.
 - Browser disconnect: Node response closes. Production adds abort signal propagation to ADK/driver.
 - Duplicate imports: `MERGE` on stable source IDs makes workbook import repeatable.
-

@@ -1,0 +1,1 @@
+.upload{margin:2rem 0;padding:1.5rem;display:grid;grid-template-columns:1fr minmax(260px,.6fr) auto;gap:1rem;align-items:center}.upload h2{margin-top:0}.upload pre{grid-column:1/-1;background:#07111f;padding:1rem;overflow:auto;color:#8ee3b1}@media(max-width:900px){.upload{grid-template-columns:1fr}}
