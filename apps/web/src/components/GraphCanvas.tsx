@@ -2,11 +2,11 @@ import cytoscape, { type Core } from 'cytoscape';
 import { useEffect, useRef } from 'react';
 import type { GraphEdge, GraphNode } from '../types';
 
-const colors: Record<string, string> = {
+export const nodeColors: Record<string, string> = {
   Entity: '#2878c7', Process: '#8057b3', BusinessRule: '#d84f64', System: '#239a78', Glossary: '#d59020', Relationship: '#e06f2e', Other: '#607d9d'
 };
 
-function nodeKind(node: GraphNode) {
+export function getNodeKind(node: GraphNode) {
   const id = node.id.toUpperCase();
   const category = String(node.properties.category ?? '').toLowerCase();
   if (id.startsWith('BR-') || id.startsWith('BR_') || category.includes('rule')) return 'BusinessRule';
@@ -29,7 +29,7 @@ export function GraphCanvas({ nodes, edges, onNode }: { nodes: GraphNode[]; edge
       minZoom: 0.5,
       maxZoom: 2.5,
       elements: [
-        ...nodes.map(node => { const kind = nodeKind(node); return { data: { id: node.id, label: node.name, kind, color: colors[kind] } }; }),
+        ...nodes.map(node => { const kind = getNodeKind(node); return { data: { id: node.id, label: node.name, kind, color: nodeColors[kind] } }; }),
         ...edges.map(edge => ({ data: { id: edge.id, source: edge.source, target: edge.target, label: edge.type.replaceAll('_', ' ') } }))
       ],
       style: [
@@ -44,7 +44,7 @@ export function GraphCanvas({ nodes, edges, onNode }: { nodes: GraphNode[]; edge
     return () => graph.current?.destroy();
   }, [nodes, edges, onNode]);
   return <div className="graph-stage">
-    <div className="graph-legend" aria-label="Node color legend">{Object.entries(colors).map(([kind, color]) => <span key={kind}><i style={{ background: color }} />{kind === 'BusinessRule' ? 'Rule' : kind}</span>)}</div>
+    <div className="graph-legend" aria-label="Node color legend">{Object.entries(nodeColors).map(([kind, color]) => <span key={kind}><i style={{ background: color }} />{kind === 'BusinessRule' ? 'Rule' : kind}</span>)}</div>
     <div className="graph-controls" aria-label="Graph controls">
       <button type="button" title="Zoom in" onClick={() => graph.current?.zoom({ level: (graph.current.zoom() ?? 1) * 1.2, renderedPosition: { x: (host.current?.clientWidth ?? 0) / 2, y: (host.current?.clientHeight ?? 0) / 2 } })}>+</button>
       <button type="button" title="Zoom out" onClick={() => graph.current?.zoom({ level: (graph.current.zoom() ?? 1) / 1.2, renderedPosition: { x: (host.current?.clientWidth ?? 0) / 2, y: (host.current?.clientHeight ?? 0) / 2 } })}>−</button>
