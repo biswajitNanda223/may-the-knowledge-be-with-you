@@ -1,4 +1,38 @@
-import { useEffect, useState } from 'react';
-import { ChatPage } from './pages/ChatPage'; import { ExplorerPage } from './pages/ExplorerPage'; import { OperationsPage } from './pages/OperationsPage'; import { TelemetryPage } from './pages/TelemetryPage';
+import { useEffect, useState, type MouseEvent } from 'react';
+import { ChatPage } from './pages/ChatPage';
+import { ExplorerPage } from './pages/ExplorerPage';
+import { OperationsPage } from './pages/OperationsPage';
+import { TelemetryPage } from './pages/TelemetryPage';
+
 const pages = { '/': ChatPage, '/explorer': ExplorerPage, '/operations': OperationsPage, '/telemetry': TelemetryPage } as const;
-export default function App() { const [path, setPath] = useState(window.location.pathname as keyof typeof pages); useEffect(() => { const pop = () => setPath(window.location.pathname as keyof typeof pages); addEventListener('popstate', pop); return () => removeEventListener('popstate', pop); }, []); const go = (next: keyof typeof pages) => (e: React.MouseEvent) => { e.preventDefault(); history.pushState({}, '', next); setPath(next); }; const Page = pages[path] ?? ChatPage; return <div><header><a className="brand" href="/" onClick={go('/')}>MAY THE KNOWLEDGE<br/><b>BE WITH YOU</b></a><nav><a className={path === '/' ? 'active' : ''} href="/" onClick={go('/')}>01 Chat + Evidence</a><a className={path === '/explorer' ? 'active' : ''} href="/explorer" onClick={go('/explorer')}>02 Graph Explorer</a><a className={path === '/operations' ? 'active' : ''} href="/operations" onClick={go('/operations')}>03 Architecture</a><a className={path === '/telemetry' ? 'active' : ''} href="/telemetry" onClick={go('/telemetry')}>04 ADK Telemetry</a></nav><span className="status">● SYSTEM ONLINE</span></header><Page/></div>; }
+const navigation = [
+  ['/', 'Chat + Evidence'],
+  ['/explorer', 'Graph Explorer'],
+  ['/operations', 'Architecture'],
+  ['/telemetry', 'ADK Telemetry']
+] as const;
+
+export default function App() {
+  const [path, setPath] = useState(window.location.pathname as keyof typeof pages);
+  useEffect(() => {
+    const onPopState = () => setPath(window.location.pathname as keyof typeof pages);
+    addEventListener('popstate', onPopState);
+    return () => removeEventListener('popstate', onPopState);
+  }, []);
+  const go = (next: keyof typeof pages) => (event: MouseEvent) => {
+    event.preventDefault(); history.pushState({}, '', next); setPath(next);
+  };
+  const Page = pages[path] ?? ChatPage;
+  return <div className="app-shell">
+    <header className="app-header">
+      <a className="brand" href="/" onClick={go('/')} aria-label="ARMY home">
+        <span className="brand-mark">A</span><span><b>ARMY</b><small>Enterprise Knowledge</small></span>
+      </a>
+      <nav aria-label="Primary navigation">
+        {navigation.map(([href, label], index) => <a key={href} className={path === href ? 'active' : ''} href={href} onClick={go(href)}><span>0{index + 1}</span>{label}</a>)}
+      </nav>
+      <span className="status"><i /> System online</span>
+    </header>
+    <Page />
+  </div>;
+}
