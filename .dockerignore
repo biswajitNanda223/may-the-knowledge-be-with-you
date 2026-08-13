@@ -1,8 +1,16 @@
 .git
+.github
+.husky
+.rollup-repair
+.vscode
 node_modules
 **/node_modules
 **/dist
 .env
 .env.keys
 data/uploads
+data/raw
+docs
+figma
 *.log
+*.md

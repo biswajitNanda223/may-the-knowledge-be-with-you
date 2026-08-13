@@ -1,11 +1,12 @@
 services:
   postgres:
     image: postgres:17-alpine
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-    ports: ["${POSTGRES_PORT}:5432"]
+    ports: ["127.0.0.1:${POSTGRES_PORT}:5432"]
     volumes: ["postgres_data:/var/lib/postgresql/data"]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
@@ -14,17 +15,19 @@ services:
       retries: 20
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.131.1
+    restart: unless-stopped
     command: ["--config=/etc/otelcol-contrib/config.yaml"]
     volumes: ["./observability/otel-collector.yml:/etc/otelcol-contrib/config.yaml:ro"]
-    ports: ["${OTEL_GRPC_PORT}:4317", "${OTEL_HTTP_PORT}:4318"]
+    ports: ["127.0.0.1:${OTEL_GRPC_PORT}:4317", "127.0.0.1:${OTEL_HTTP_PORT}:4318"]
   neo4j:
     image: neo4j:5.26-community
+    restart: unless-stopped
     environment:
       NEO4J_AUTH: ${NEO4J_USERNAME}/${NEO4J_PASSWORD}
       NEO4J_server_memory_heap_initial__size: ${NEO4J_HEAP_INITIAL}
       NEO4J_server_memory_heap_max__size: ${NEO4J_HEAP_MAX}
       NEO4J_server_memory_pagecache_size: ${NEO4J_PAGECACHE}
-    ports: ["${NEO4J_HTTP_PORT}:7474", "${NEO4J_BOLT_PORT}:7687"]
+    ports: ["127.0.0.1:${NEO4J_HTTP_PORT}:7474", "127.0.0.1:${NEO4J_BOLT_PORT}:7687"]
     volumes: ["neo4j_data:/data"]
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:7474 >/dev/null || exit 1"]
@@ -32,12 +35,11 @@ services:
       timeout: 5s
       retries: 20
   api:
+    init: true
+    restart: unless-stopped
     build:
       context: .
       dockerfile: apps/api/Dockerfile
-      args:
-        NODE_ENV: ${DOCKER_NODE_ENV}
-        API_PORT: ${API_PORT}
     environment:
       NODE_ENV: ${DOCKER_NODE_ENV}
       API_HOST: ${API_HOST}
@@ -64,14 +66,28 @@ services:
       neo4j: { condition: service_healthy }
       postgres: { condition: service_healthy }
       otel-collector: { condition: service_started }
-    command: ["sh", "-c", "npx prisma migrate deploy --schema /app/prisma/schema.prisma && node dist/server.js"]
+    command: ["sh", "-c", "./node_modules/.bin/prisma migrate deploy --schema /app/prisma/schema.prisma && exec node dist/server.js"]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health/live').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
     ports: ["${API_PORT}:${API_PORT}"]
   web:
+    init: true
+    restart: unless-stopped
     build:
       context: .
       dockerfile: apps/web/Dockerfile
-    depends_on: [api]
-    ports: ["${WEB_PORT}:80"]
+    depends_on:
+      api: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+    ports: ["${WEB_PORT}:8080"]
 volumes:
   neo4j_data:
   postgres_data:

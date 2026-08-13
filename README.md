@@ -33,13 +33,70 @@ Runtime configuration comes exclusively from the dotenvx-encrypted `.env`.
 Docker Compose receives ports, credentials, memory limits, origins, model settings,
 and service URLs from that same decrypted environment; Compose contains no local secrets.
 
-Full stack in containers:
+## Docker: portable full-stack setup
+
+Requirements: Docker Desktop/Engine with Compose v2, at least 4 GB free RAM, and
+the dotenvx private key for the encrypted `.env`. Images support normal Docker
+Desktop platforms (`linux/amd64` and `linux/arm64`) and do not copy host
+`node_modules` into containers.
+
+First build and start:
 
 ```bash
 npm run docker:up
 ```
 
-Open `http://localhost:8080`. Set a rotated `GOOGLE_API_KEY` and `AGENT_STRATEGY=adk` to use Gemini.
+`docker:up` builds API first, then web. Sequential builds avoid frontend and
+backend competing for RAM on smaller laptops. After both images build, Compose
+starts services in background and waits for database/API health checks.
+
+Open `http://localhost:8080`. Set a rotated `GOOGLE_API_KEY` and
+`AGENT_STRATEGY=adk` to use Gemini. With `AGENT_STRATEGY=mock`, Gemini credentials
+are not needed.
+
+Common commands:
+
+```bash
+# Start existing images without rebuilding
+npm run docker:start
+
+# Rebuild only changed service
+npm run docker:build:api
+npm run docker:build:web
+
+# Follow application logs
+npm run docker:logs
+
+# Stop containers; named database volumes remain
+npm run docker:down
+```
+
+Health endpoints:
+
+- Web/Nginx: `http://localhost:8080/healthz`
+- API through web proxy: `http://localhost:8080/api/health/live`
+- API readiness: `http://localhost:8080/api/health/ready`
+
+Local database and telemetry ports bind to `127.0.0.1`, not the LAN. API and web
+containers run as non-root users. PostgreSQL and Neo4j data live in named Docker
+volumes, so rebuilding images does not erase data.
+
+Troubleshooting another laptop:
+
+```bash
+# Validate fully decrypted Compose configuration
+npm run env:run -- docker compose config
+
+# Rebuild one image without stale cache
+npm run env:run -- docker compose build --no-cache api
+
+# Show container health and exit state
+npm run env:run -- docker compose ps
+```
+
+Do not copy `node_modules` between Windows/macOS/Linux machines. Clone repository,
+provide dotenvx decryption key, then build on target laptop. Docker selects correct
+CPU image automatically.
 
 Fastify API documentation:
 
