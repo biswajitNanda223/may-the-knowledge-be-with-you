@@ -1,11 +1,8 @@
 import { type FormEvent, useCallback, useEffect, useState } from "react";
 import type React from "react";
 import { getGraph, getNeighbors } from "../api";
-import {
-  getNodeKind,
-  GraphCanvas,
-  nodeColors,
-} from "../components/GraphCanvas";
+import { GraphCanvas } from "../components/GraphCanvas";
+import { getNodeKind, nodeColors } from "../graph-model";
 import type { GraphEdge, GraphNode } from "../types";
 
 export function ExplorerPage() {

@@ -1,46 +1,7 @@
-import cytoscape, { type Core, type ElementDefinition } from "cytoscape";
+import cytoscape, { type Core } from "cytoscape";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { buildGraphElements, nodeColors } from "../graph-model";
 import type { GraphEdge, GraphNode } from "../types";
-
-export const nodeColors: Record<string, string> = {
-  Entity: "#6366F1",
-  Process: "#9333EA",
-  BusinessRule: "#E84D5B",
-  System: "#00A884",
-  Glossary: "#E99A24",
-  Relationship: "#F2683A",
-  Other: "#64748B",
-};
-
-export function getNodeKind(node: GraphNode) {
-  const id = node.id.toUpperCase();
-  const category = String(node.properties.category ?? "").toLowerCase();
-  if (id.startsWith("BR-") || id.startsWith("BR_") || category.includes("rule"))
-    return "BusinessRule";
-  if (
-    id.startsWith("SYS") ||
-    category.includes("system") ||
-    category.includes("application")
-  )
-    return "System";
-  if (
-    id.startsWith("PROC") ||
-    id.startsWith("PS-") ||
-    category.includes("process")
-  )
-    return "Process";
-  if (
-    id.startsWith("GL-") ||
-    id.startsWith("TERM") ||
-    category.includes("glossary") ||
-    category.includes("term")
-  )
-    return "Glossary";
-  if (id.startsWith("REL") || category.includes("relationship"))
-    return "Relationship";
-  if (id.startsWith("ENT") || category) return "Entity";
-  return "Other";
-}
 
 type Props = {
   nodes: GraphNode[];
@@ -62,44 +23,10 @@ export function GraphCanvas({
   const graph = useRef<Core | null>(null);
   const [fullscreen, setFullscreen] = useState(false);
 
-  const elements = useMemo<ElementDefinition[]>(() => {
-    const nodeIds = new Set(nodes.map((node) => node.id));
-    const highlighted = new Set(highlightedNodeIds);
-    const seenEdges = new Set<string>();
-    const safeEdges = edges.filter((edge) => {
-      if (
-        !nodeIds.has(edge.source) ||
-        !nodeIds.has(edge.target) ||
-        edge.source === edge.target
-      )
-        return false;
-      const key = `${edge.source}|${edge.target}|${edge.type}`;
-      if (seenEdges.has(key)) return false;
-      seenEdges.add(key);
-      return true;
-    });
-    return [
-      ...nodes.map((node) => {
-        const kind = getNodeKind(node);
-        return {
-          data: {
-            id: node.id,
-            label: node.name,
-            color: nodeColors[kind],
-            cited: highlighted.has(node.id) ? "yes" : "no",
-          },
-        };
-      }),
-      ...safeEdges.map((edge) => ({
-        data: {
-          id: edge.id,
-          source: edge.source,
-          target: edge.target,
-          label: edge.type.replaceAll("_", " "),
-        },
-      })),
-    ];
-  }, [nodes, edges, highlightedNodeIds.join("|")]);
+  const elements = useMemo(
+    () => buildGraphElements(nodes, edges, highlightedNodeIds),
+    [nodes, edges, highlightedNodeIds],
+  );
 
   useEffect(() => {
     const changed = () => {
