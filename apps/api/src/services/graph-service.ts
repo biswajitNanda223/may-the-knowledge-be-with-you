@@ -16,17 +16,44 @@ import {
 } from "./graph-mapper.js";
 import { GRAPH_QUERIES } from "./graph-queries.js";
 
+const DEFAULT_NEIGHBOR_LIMIT = 50;
+const MAX_SEARCH_TERMS = 12;
+const MIN_SEARCH_TERM_LENGTH = 3;
+const RETRIEVAL_QUERY_ID = "retrieval.keyword-neighborhood.v1";
+
+export type GraphPageInput = {
+  cursor?: string;
+  limit?: number;
+  search?: string;
+  label?: string;
+};
+
+function clampLimit(requested: number | undefined, fallback: number): number {
+  return Math.min(requested ?? fallback, config.GRAPH_MAX_PAGE_SIZE);
+}
+
+function decodeOffset(cursor?: string): number {
+  if (!cursor) return 0;
+
+  const offset = Number(Buffer.from(cursor, "base64url").toString());
+  return Number.isSafeInteger(offset) && offset >= 0 ? offset : 0;
+}
+
+function encodeOffset(offset: number): string {
+  return Buffer.from(String(offset)).toString("base64url");
+}
+
+function extractSearchTerms(question: string): string[] {
+  return question
+    .toLowerCase()
+    .split(/[^a-z0-9_-]+/)
+    .filter((term) => term.length >= MIN_SEARCH_TERM_LENGTH)
+    .slice(0, MAX_SEARCH_TERMS);
+}
+
 export class GraphService {
-  async page(input: {
-    cursor?: string;
-    limit?: number;
-    search?: string;
-    label?: string;
-  }): Promise<GraphSlice> {
-    const limit = Math.min(
-      input.limit ?? config.GRAPH_PAGE_SIZE,
-      config.GRAPH_MAX_PAGE_SIZE,
-    );
+  async page(input: GraphPageInput): Promise<GraphSlice> {
+    const limit = clampLimit(input.limit, config.GRAPH_PAGE_SIZE);
     const cursor = decodeCursor(input.cursor);
     const result = await read<{ n: neo4j.Node }>(GRAPH_QUERIES.pageNodes, {
       label: input.label ?? "",
@@ -37,23 +64,9 @@ export class GraphService {
     });
     const pageRecords = result.records.slice(0, limit);
     const nodes = pageRecords.map((record) => mapNode(record.get("n")));
-    const ids = nodes.map((n) => n.id);
-    const rels = ids.length
-      ? await read<{ r: neo4j.Relationship; rMap: Record<string, unknown> }>(
-          GRAPH_QUERIES.internalRelationships,
-          { ids },
-        )
-      : null;
-    const edges =
-      rels?.records.map((rec) => {
-        const r = rec.get("r");
-        const map = rec.get("rMap");
-        return {
-          ...mapRelationship(r),
-          source: String(map.fromId),
-          target: String(map.toId),
-        };
-      }) ?? [];
+    const edges = await this.findInternalRelationships(
+      nodes.map((node) => node.id),
+    );
     const last = nodes.at(-1);
     return {
       nodes,
@@ -67,13 +80,11 @@ export class GraphService {
 
   async neighbors(
     id: string,
-    limit = 50,
+    limit = DEFAULT_NEIGHBOR_LIMIT,
     cursor?: string,
   ): Promise<GraphSlice> {
-    const after = cursor
-      ? Number(Buffer.from(cursor, "base64url").toString())
-      : 0;
-    const safeLimit = Math.min(limit, config.GRAPH_MAX_PAGE_SIZE);
+    const after = decodeOffset(cursor);
+    const safeLimit = clampLimit(limit, DEFAULT_NEIGHBOR_LIMIT);
     const result = await read<{
       n: neo4j.Node;
       r: neo4j.Relationship;
@@ -89,30 +100,34 @@ export class GraphService {
     for (const row of rows) {
       const sourceNode = row.get("n");
       const neighborNode = row.get("other");
-      const a = mapNode(sourceNode);
-      const b = mapNode(neighborNode);
-      const rel = row.get("r");
-      nodesById.set(a.id, a);
-      nodesById.set(b.id, b);
-      edges.push(mapRelationshipBetween(rel, sourceNode, a, neighborNode, b));
+      const source = mapNode(sourceNode);
+      const neighbor = mapNode(neighborNode);
+      const relationship = row.get("r");
+      nodesById.set(source.id, source);
+      nodesById.set(neighbor.id, neighbor);
+      edges.push(
+        mapRelationshipBetween(
+          relationship,
+          sourceNode,
+          source,
+          neighborNode,
+          neighbor,
+        ),
+      );
     }
     return {
       nodes: [...nodesById.values()],
       edges,
       nextCursor:
         result.records.length > safeLimit
-          ? Buffer.from(String(after + safeLimit)).toString("base64url")
+          ? encodeOffset(after + safeLimit)
           : null,
     };
   }
 
   async retrieve(question: string): Promise<Evidence> {
     const started = Date.now();
-    const terms = question
-      .toLowerCase()
-      .split(/[^a-z0-9_-]+/)
-      .filter((x) => x.length > 2)
-      .slice(0, 12);
+    const terms = extractSearchTerms(question);
     const result = await read<{
       n: neo4j.Node;
       r: neo4j.Relationship | null;
@@ -122,24 +137,50 @@ export class GraphService {
     const edges = new Map<string, GraphEdge>();
     for (const row of result.records) {
       const sourceNode = row.get("n");
-      const a = mapNode(sourceNode);
-      nodes.set(a.id, a);
-      const bRaw = row.get("m");
-      const r = row.get("r");
-      if (bRaw && r) {
-        const b = mapNode(bRaw);
-        nodes.set(b.id, b);
+      const source = mapNode(sourceNode);
+      nodes.set(source.id, source);
+      const neighborNode = row.get("m");
+      const relationship = row.get("r");
+      if (neighborNode && relationship) {
+        const neighbor = mapNode(neighborNode);
+        nodes.set(neighbor.id, neighbor);
         edges.set(
-          r.elementId,
-          mapRelationshipBetween(r, sourceNode, a, bRaw, b),
+          relationship.elementId,
+          mapRelationshipBetween(
+            relationship,
+            sourceNode,
+            source,
+            neighborNode,
+            neighbor,
+          ),
         );
       }
     }
     return {
       nodes: [...nodes.values()],
       edges: [...edges.values()],
-      cypherId: "retrieval.keyword-neighborhood.v1",
+      cypherId: RETRIEVAL_QUERY_ID,
       elapsedMs: Date.now() - started,
     };
+  }
+
+  private async findInternalRelationships(ids: string[]): Promise<GraphEdge[]> {
+    if (ids.length === 0) return [];
+
+    const result = await read<{
+      r: neo4j.Relationship;
+      rMap: Record<string, unknown>;
+    }>(GRAPH_QUERIES.internalRelationships, { ids });
+
+    return result.records.map((record) => {
+      const relationship = record.get("r");
+      const endpoints = record.get("rMap");
+
+      return {
+        ...mapRelationship(relationship),
+        source: String(endpoints.fromId),
+        target: String(endpoints.toId),
+      };
+    });
   }
 }

@@ -1,9 +1,11 @@
-import cytoscape, { type Core } from "cytoscape";
-import { useEffect, useMemo, useRef, useState } from "react";
+import cytoscape, { type Core, type ElementDefinition } from "cytoscape";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
+import { GRAPH_LAYOUT, GRAPH_STYLES, GRAPH_VIEW } from "../graph-config";
 import { buildGraphElements, nodeColors } from "../graph-model";
+import { startRouteAnimation } from "../graph-route-animation";
 import type { GraphEdge, GraphNode } from "../types";
 
-type Props = {
+type GraphCanvasProps = {
   nodes: GraphNode[];
   edges: GraphEdge[];
   onNode?: (id: string) => void;
@@ -17,297 +19,227 @@ export function GraphCanvas({
   onNode,
   highlightedNodeIds = [],
   animatedPaths = [],
-}: Props) {
-  const host = useRef<HTMLDivElement>(null);
-  const stage = useRef<HTMLDivElement>(null);
-  const graph = useRef<Core | null>(null);
-  const [fullscreen, setFullscreen] = useState(false);
-
+}: GraphCanvasProps) {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const elements = useMemo(
     () => buildGraphElements(nodes, edges, highlightedNodeIds),
     [nodes, edges, highlightedNodeIds],
   );
+  const graphRef = useGraph(hostRef, elements, onNode);
+  const fullscreen = useFullscreen(stageRef, graphRef);
 
-  useEffect(() => {
-    const changed = () => {
-      setFullscreen(document.fullscreenElement === stage.current);
-      requestAnimationFrame(() => {
-        graph.current?.resize();
-        graph.current?.fit(undefined, 70);
-      });
-    };
-    document.addEventListener("fullscreenchange", changed);
-    return () => document.removeEventListener("fullscreenchange", changed);
-  }, []);
+  useGraphResize(hostRef, graphRef);
+  useAnimatedRoutes(graphRef, elements, animatedPaths);
 
-  useEffect(() => {
-    if (!host.current) return;
-    graph.current?.destroy();
-    const cy = cytoscape({
-      container: host.current,
-      minZoom: 0.35,
-      maxZoom: 2.4,
-      wheelSensitivity: 0.18,
-      elements,
-      style: [
-        {
-          selector: "node",
-          style: {
-            width: 72,
-            height: 72,
-            "background-color": "data(color)",
-            "border-width": 4,
-            "border-color": "#FFFFFF",
-            label: "data(label)",
-            color: "#FFFFFF",
-            "font-family": "Inter, sans-serif",
-            "font-weight": 650,
-            "font-size": 9,
-            "text-wrap": "ellipsis",
-            "text-max-width": 58,
-            "text-valign": "center",
-            "text-halign": "center",
-            "overlay-opacity": 0,
-            "transition-property": "opacity, border-width, border-color",
-            "transition-duration": "550ms",
-            "transition-timing-function": "ease-in-out",
-          },
-        },
-        {
-          selector: "edge",
-          style: {
-            width: 1.25,
-            "line-color": "#D8CFF0",
-            "target-arrow-shape": "none",
-            "curve-style": "unbundled-bezier",
-            "control-point-distances": 18,
-            "control-point-weights": 0.5,
-            label: "",
-            color: "#705F82",
-            "font-family": "Inter, sans-serif",
-            "font-size": 7,
-            "text-background-color": "#FFFFFF",
-            "text-background-opacity": 0.96,
-            "text-background-padding": 3,
-            "text-rotation": "autorotate",
-            "overlay-opacity": 0,
-            "transition-property":
-              "opacity, width, line-color, target-arrow-color",
-            "transition-duration": "550ms",
-            "transition-timing-function": "ease-in-out",
-          },
-        },
-        {
-          selector: 'node[cited = "yes"]',
-          style: { "border-width": 7, "border-color": "#F59E0B" },
-        },
-        {
-          selector: "node:hover, node:selected",
-          style: { "border-width": 7, "border-color": "#C4B5FD" },
-        },
-        {
-          selector: "edge:selected",
-          style: { label: "data(label)", width: 3, "line-color": "#8B5CF6" },
-        },
-        { selector: ".route-muted", style: { opacity: 0.1 } },
-        { selector: ".route-active", style: { opacity: 1 } },
-        {
-          selector: "node.route-active",
-          style: { "border-width": 7, "border-color": "#A78BFA" },
-        },
-        {
-          selector: "edge.route-active",
-          style: {
-            label: "data(label)",
-            width: 4,
-            "line-color": "#8B5CF6",
-            "target-arrow-color": "#7C3AED",
-            "target-arrow-shape": "triangle",
-            "arrow-scale": 0.75,
-            "z-index": 10,
-          },
-        },
-        {
-          selector: "node.route-current",
-          style: { "border-width": 10, "border-color": "#FFFFFF" },
-        },
-        {
-          selector: "edge.route-current",
-          style: { width: 7, "line-color": "#C4B5FD" },
-        },
-      ] as unknown as cytoscape.StylesheetCSS[],
-      layout: {
-        name: "cose",
-        animate: false,
-        fit: true,
-        padding: 100,
-        randomize: true,
-        avoidOverlap: true,
-        nodeRepulsion: () => 11500,
-        idealEdgeLength: () => 145,
-        edgeElasticity: () => 95,
-        nestingFactor: 1.1,
-        gravity: 0.22,
-        numIter: 1200,
-      },
-    });
-    graph.current = cy;
-    cy.one("layoutstop", () => cy.fit(undefined, 80));
-    cy.on("tap", "node", (event) => onNode?.(event.target.id()));
-    return () => {
-      cy.destroy();
-      if (graph.current === cy) graph.current = null;
-    };
-  }, [elements, onNode]);
+  const zoom = (factor: number) => {
+    const graph = graphRef.current;
+    if (!graph) return;
 
-  useEffect(() => {
-    if (!host.current) return;
-    let frame = 0;
-    const observer = new ResizeObserver(() => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => graph.current?.resize());
-    });
-    observer.observe(host.current);
-    return () => {
-      cancelAnimationFrame(frame);
-      observer.disconnect();
-    };
-  }, []);
-
-  useEffect(() => {
-    const cy = graph.current;
-    const paths = animatedPaths
-      .map((path) => path.filter((id) => !cy?.getElementById(id).empty()))
-      .filter((path) => path.length);
-    if (!cy || !paths.length) return;
-    const timers: Array<ReturnType<typeof setTimeout>> = [];
-    let routeElements = cy.collection();
-    paths.flat().forEach((id) => {
-      routeElements = routeElements.union(cy.getElementById(id));
-    });
-    const stepMs = 900;
-    const routePauseMs = 1500;
-    const cycleMs = paths.reduce(
-      (total, path) => total + path.length * stepMs + routePauseMs,
-      0,
-    );
-    const play = () => {
-      timers.forEach(clearTimeout);
-      timers.length = 0;
-      cy.elements()
-        .removeClass("route-active route-current")
-        .addClass("route-muted");
-      cy.animate({
-        fit: { eles: routeElements, padding: 110 },
-        duration: 700,
-        easing: "ease-in-out-cubic",
-      });
-      let offset = 0;
-      paths.forEach((path) => {
-        timers.push(
-          setTimeout(
-            () =>
-              cy
-                .elements()
-                .removeClass("route-active route-current")
-                .addClass("route-muted"),
-            offset,
-          ),
-        );
-        path.forEach((id, index) =>
-          timers.push(
-            setTimeout(
-              () => {
-                cy.elements().removeClass("route-current");
-                cy.getElementById(id)
-                  .removeClass("route-muted")
-                  .addClass("route-active route-current");
-              },
-              offset + index * stepMs,
-            ),
-          ),
-        );
-        offset += path.length * stepMs + routePauseMs;
-      });
-    };
-    play();
-    const interval = setInterval(play, cycleMs);
-    return () => {
-      clearInterval(interval);
-      timers.forEach(clearTimeout);
-      cy.elements().removeClass("route-muted route-active route-current");
-    };
-  }, [elements, animatedPaths.map((path) => path.join("|")).join("::")]);
-
-  async function toggleFullscreen() {
-    if (!stage.current) return;
-    if (document.fullscreenElement === stage.current)
-      await document.exitFullscreen();
-    else await stage.current.requestFullscreen();
-  }
-  const zoom = (factor: number) =>
-    graph.current?.zoom({
-      level: (graph.current.zoom() ?? 1) * factor,
+    graph.zoom({
+      level: graph.zoom() * factor,
       renderedPosition: {
-        x: (host.current?.clientWidth ?? 0) / 2,
-        y: (host.current?.clientHeight ?? 0) / 2,
+        x: (hostRef.current?.clientWidth ?? 0) / 2,
+        y: (hostRef.current?.clientHeight ?? 0) / 2,
       },
     });
+  };
+
+  const fit = () => graphRef.current?.fit(undefined, GRAPH_VIEW.fitPadding);
+  const toggleFullscreen = async () => {
+    if (!stageRef.current) return;
+
+    if (document.fullscreenElement === stageRef.current) {
+      await document.exitFullscreen();
+      return;
+    }
+    await stageRef.current.requestFullscreen();
+  };
 
   return (
     <div
       className={`graph-stage ${fullscreen ? "is-fullscreen" : ""}`}
-      ref={stage}
+      ref={stageRef}
     >
-      <div className="graph-legend" aria-label="Node color legend">
-        {Object.entries(nodeColors).map(([kind, color]) => (
-          <span key={kind}>
-            <i style={{ background: color }} />
-            {kind === "BusinessRule" ? "Rule" : kind}
-          </span>
-        ))}
-      </div>
-      <div className="graph-controls" aria-label="Graph controls">
-        <button type="button" title="Zoom in" onClick={() => zoom(1.2)}>
-          +
-        </button>
-        <button type="button" title="Zoom out" onClick={() => zoom(1 / 1.2)}>
-          −
-        </button>
-        <button
-          type="button"
-          title="Fit map"
-          onClick={() => graph.current?.fit(undefined, 70)}
-        >
-          ⌂
-        </button>
-        <button
-          type="button"
-          title={fullscreen ? "Exit fullscreen" : "Open fullscreen"}
-          onClick={toggleFullscreen}
-        >
-          {fullscreen ? "↙" : "⛶"}
-        </button>
-      </div>
+      <GraphLegend />
+      <GraphControls
+        fullscreen={fullscreen}
+        onZoomIn={() => zoom(GRAPH_VIEW.zoomStep)}
+        onZoomOut={() => zoom(1 / GRAPH_VIEW.zoomStep)}
+        onFit={fit}
+        onToggleFullscreen={toggleFullscreen}
+      />
       {fullscreen && (
         <div className="fullscreen-label">
           Fullscreen map · Press Esc to exit
         </div>
       )}
-      {!nodes.length && (
-        <div className="graph-empty">
-          <span>
-            <img src="/knowledge-way-logo.png" alt="" />
-          </span>
-          <b>Your knowledge map will appear here</b>
-          <small>Search the ontology or ask a question to begin.</small>
-        </div>
-      )}
+      {nodes.length === 0 && <EmptyGraph />}
       <div
         className="graph-canvas"
-        ref={host}
+        ref={hostRef}
         aria-label="Interactive enterprise knowledge map"
       />
+    </div>
+  );
+}
+
+function useGraph(
+  hostRef: RefObject<HTMLDivElement | null>,
+  elements: ElementDefinition[],
+  onNode?: (id: string) => void,
+): RefObject<Core | null> {
+  const graphRef = useRef<Core | null>(null);
+
+  useEffect(() => {
+    const container = hostRef.current;
+    if (!container) return;
+
+    graphRef.current?.destroy();
+    const graph = cytoscape({
+      container,
+      elements,
+      style: GRAPH_STYLES,
+      layout: GRAPH_LAYOUT,
+      minZoom: GRAPH_VIEW.minZoom,
+      maxZoom: GRAPH_VIEW.maxZoom,
+      wheelSensitivity: GRAPH_VIEW.wheelSensitivity,
+    });
+    graphRef.current = graph;
+
+    graph.one("layoutstop", () =>
+      graph.fit(undefined, GRAPH_VIEW.layoutFitPadding),
+    );
+    graph.on("tap", "node", (event) => onNode?.(event.target.id()));
+
+    return () => {
+      graph.destroy();
+      if (graphRef.current === graph) graphRef.current = null;
+    };
+  }, [elements, hostRef, onNode]);
+
+  return graphRef;
+}
+
+function useFullscreen(
+  stageRef: RefObject<HTMLDivElement | null>,
+  graphRef: RefObject<Core | null>,
+): boolean {
+  const [fullscreen, setFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setFullscreen(document.fullscreenElement === stageRef.current);
+      requestAnimationFrame(() => {
+        graphRef.current?.resize();
+        graphRef.current?.fit(undefined, GRAPH_VIEW.fitPadding);
+      });
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, [graphRef, stageRef]);
+
+  return fullscreen;
+}
+
+function useGraphResize(
+  hostRef: RefObject<HTMLDivElement | null>,
+  graphRef: RefObject<Core | null>,
+) {
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+
+    let frame = 0;
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => graphRef.current?.resize());
+    });
+    observer.observe(host);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [graphRef, hostRef]);
+}
+
+function useAnimatedRoutes(
+  graphRef: RefObject<Core | null>,
+  elements: ElementDefinition[],
+  animatedPaths: string[][],
+) {
+  const pathKey = animatedPaths.map((path) => path.join("|")).join("::");
+
+  // The key tracks path contents without restarting for a new array identity.
+  useEffect(() => {
+    const graph = graphRef.current;
+    if (!graph || animatedPaths.length === 0) return;
+
+    return startRouteAnimation(graph, animatedPaths);
+  }, [elements, graphRef, pathKey]);
+}
+
+function GraphLegend() {
+  return (
+    <div className="graph-legend" aria-label="Node color legend">
+      {Object.entries(nodeColors).map(([kind, color]) => (
+        <span key={kind}>
+          <i style={{ background: color }} />
+          {kind === "BusinessRule" ? "Rule" : kind}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+type GraphControlsProps = {
+  fullscreen: boolean;
+  onZoomIn: () => void;
+  onZoomOut: () => void;
+  onFit: () => void;
+  onToggleFullscreen: () => void;
+};
+
+function GraphControls({
+  fullscreen,
+  onZoomIn,
+  onZoomOut,
+  onFit,
+  onToggleFullscreen,
+}: GraphControlsProps) {
+  return (
+    <div className="graph-controls" aria-label="Graph controls">
+      <button type="button" title="Zoom in" onClick={onZoomIn}>
+        +
+      </button>
+      <button type="button" title="Zoom out" onClick={onZoomOut}>
+        −
+      </button>
+      <button type="button" title="Fit map" onClick={onFit}>
+        ⌂
+      </button>
+      <button
+        type="button"
+        title={fullscreen ? "Exit fullscreen" : "Open fullscreen"}
+        onClick={onToggleFullscreen}
+      >
+        {fullscreen ? "↙" : "⛶"}
+      </button>
+    </div>
+  );
+}
+
+function EmptyGraph() {
+  return (
+    <div className="graph-empty">
+      <span>
+        <img src="/knowledge-way-logo.png" alt="" />
+      </span>
+      <b>Your knowledge map will appear here</b>
+      <small>Search the ontology or ask a question to begin.</small>
     </div>
   );
 }

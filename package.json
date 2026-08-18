@@ -10,7 +10,7 @@
     "dev": "dotenvx run -- concurrently -n api,web -c cyan,magenta \"npm run dev -w @mtkbwy/api\" \"npm run dev -w @mtkbwy/web\"",
     "build": "npm run build -w @mtkbwy/api && npm run build -w @mtkbwy/web",
     "test": "npm run test -w @mtkbwy/api && npm run test -w @mtkbwy/web",
-    "lint": "npm run typecheck -ws --if-present",
+    "lint": "npm run typecheck --workspaces --if-present",
     "format": "prettier --write \"apps/**/*.{ts,tsx,css,mjs}\"",
     "format:check": "prettier --check \"apps/**/*.{ts,tsx,css,mjs}\"",
     "seed": "dotenvx run -- npm run seed -w @mtkbwy/api",
