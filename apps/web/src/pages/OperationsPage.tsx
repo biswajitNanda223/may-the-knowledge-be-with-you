@@ -1,10 +1,103 @@
-import { useState } from 'react';
-import { API } from '../api';
+import { useState } from "react";
+import { API } from "../api";
 
-const stages = [['01','Source intake','Controlled files enter the workspace'],['02','Validation','Structure and limits are verified'],['03','Normalization','Records receive stable identifiers'],['04','Knowledge graph','Concepts and relationships are connected'],['05','Discovery','Teams search, ask, and explore']];
+const stages = [
+  ["01", "Source intake", "Controlled files enter the workspace"],
+  ["02", "Validation", "Structure and limits are verified"],
+  ["03", "Normalization", "Records receive stable identifiers"],
+  ["04", "Knowledge graph", "Concepts and relationships are connected"],
+  ["05", "Discovery", "Teams search, ask, and explore"],
+];
 
 export function OperationsPage() {
-  const [file,setFile]=useState<File>(); const [result,setResult]=useState(''); const [busy,setBusy]=useState(false);
-  async function upload(){if(!file)return;setBusy(true);setResult('');try{const body=new FormData();body.set('file',file);const response=await fetch(`${API}/v1/ingestion/files`,{method:'POST',body});const data=await response.json();if(!response.ok)throw new Error(data.message??`Upload failed: ${response.status}`);setResult(JSON.stringify(data,null,2));}catch(error){setResult(error instanceof Error?error.message:'Upload failed');}finally{setBusy(false)}}
-  return <main className="ops"><header className="page-title"><div><p className="eyebrow">Knowledge operations</p><h1>Trusted sources, connected.</h1><p className="lede">Bring structured enterprise knowledge into one governed workspace. Every record remains traceable to its source.</p></div></header><section className="upload panel"><div><p className="eyebrow">Add a source</p><h2>Import enterprise knowledge</h2><p className="muted">Choose an Excel ontology or a staged text source. Files are validated before they enter the knowledge map.</p></div><label className="file-picker"><input type="file" accept=".xlsx,.txt" onChange={event=>setFile(event.target.files?.[0])}/><span>{file?.name??'Choose .xlsx or .txt file'}</span></label><button disabled={!file||busy} onClick={upload}>{busy?'Importing…':'Import source'}</button>{result&&<pre>{result}</pre>}</section><section className="flow">{stages.map(([n,t,d]) => <article key={n}><span>{n}</span><h2>{t}</h2><p>{d}</p></article>)}</section><section className="governance"><div><p className="eyebrow">Built-in governance</p><h2>Designed for dependable enterprise use</h2></div><div className="governance-grid">{['Traceable source records','Stable enterprise identifiers','Controlled query depth','Validated file ingestion','Privacy-safe activity records','Portable data connections'].map(x => <article key={x}><i>✓</i><span>{x}</span></article>)}</div></section></main>;
+  const [file, setFile] = useState<File>();
+  const [result, setResult] = useState("");
+  const [busy, setBusy] = useState(false);
+  async function upload() {
+    if (!file) return;
+    setBusy(true);
+    setResult("");
+    try {
+      const body = new FormData();
+      body.set("file", file);
+      const response = await fetch(`${API}/v1/ingestion/files`, {
+        method: "POST",
+        body,
+      });
+      const data = await response.json();
+      if (!response.ok)
+        throw new Error(data.message ?? `Upload failed: ${response.status}`);
+      setResult(JSON.stringify(data, null, 2));
+    } catch (error) {
+      setResult(error instanceof Error ? error.message : "Upload failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <main className="ops">
+      <header className="page-title">
+        <div>
+          <p className="eyebrow">Knowledge operations</p>
+          <h1>Trusted sources, connected.</h1>
+          <p className="lede">
+            Bring structured enterprise knowledge into one governed workspace.
+            Every record remains traceable to its source.
+          </p>
+        </div>
+      </header>
+      <section className="upload panel">
+        <div>
+          <p className="eyebrow">Add a source</p>
+          <h2>Import enterprise knowledge</h2>
+          <p className="muted">
+            Choose an Excel ontology or a staged text source. Files are
+            validated before they enter the knowledge map.
+          </p>
+        </div>
+        <label className="file-picker">
+          <input
+            type="file"
+            accept=".xlsx,.txt"
+            onChange={(event) => setFile(event.target.files?.[0])}
+          />
+          <span>{file?.name ?? "Choose .xlsx or .txt file"}</span>
+        </label>
+        <button disabled={!file || busy} onClick={upload}>
+          {busy ? "Importing…" : "Import source"}
+        </button>
+        {result && <pre>{result}</pre>}
+      </section>
+      <section className="flow">
+        {stages.map(([n, t, d]) => (
+          <article key={n}>
+            <span>{n}</span>
+            <h2>{t}</h2>
+            <p>{d}</p>
+          </article>
+        ))}
+      </section>
+      <section className="governance">
+        <div>
+          <p className="eyebrow">Built-in governance</p>
+          <h2>Designed for dependable enterprise use</h2>
+        </div>
+        <div className="governance-grid">
+          {[
+            "Traceable source records",
+            "Stable enterprise identifiers",
+            "Controlled query depth",
+            "Validated file ingestion",
+            "Privacy-safe activity records",
+            "Portable data connections",
+          ].map((x) => (
+            <article key={x}>
+              <i>✓</i>
+              <span>{x}</span>
+            </article>
+          ))}
+        </div>
+      </section>
+    </main>
+  );
 }

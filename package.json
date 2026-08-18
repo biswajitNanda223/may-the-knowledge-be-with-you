@@ -11,6 +11,8 @@
     "build": "npm run build -w @mtkbwy/api && npm run build -w @mtkbwy/web",
     "test": "npm run test -w @mtkbwy/api && npm run test -w @mtkbwy/web",
     "lint": "npm run typecheck -ws --if-present",
+    "format": "prettier --write \"apps/**/*.{ts,tsx,css,mjs}\"",
+    "format:check": "prettier --check \"apps/**/*.{ts,tsx,css,mjs}\"",
     "seed": "dotenvx run -- npm run seed -w @mtkbwy/api",
     "env:run": "dotenvx run --",
     "docker:build:api": "dotenvx run -- docker compose build api",
@@ -37,13 +39,16 @@
     "eslint-plugin-security": "^3.0.1",
     "globals": "^16.3.0",
     "husky": "^9.1.7",
+    "prettier": "^3.9.6",
     "secretlint": "^10.2.1",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.41.0",
     "uuid": "^11.1.1"
   },
   "overrides": {
-    "@google/adk": { "adm-zip": "0.6.0" },
+    "@google/adk": {
+      "adm-zip": "0.6.0"
+    },
     "@google-cloud/opentelemetry-cloud-monitoring-exporter": "0.22.0",
     "@google-cloud/storage": "7.22.0",
     "@opentelemetry/core": "2.10.0",

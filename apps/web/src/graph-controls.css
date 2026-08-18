@@ -1,10 +1,65 @@
-.graph-stage:fullscreen,.graph-stage.is-fullscreen{width:100vw;height:100vh;min-height:100vh;border-radius:0;background:#fff}
-.graph-stage:fullscreen .graph-controls,.graph-stage.is-fullscreen .graph-controls{right:1.5rem;top:1.5rem}
-.graph-stage:fullscreen .graph-legend,.graph-stage.is-fullscreen .graph-legend{left:1.5rem;top:1.5rem}
-.fullscreen-label{position:absolute;z-index:5;left:50%;bottom:1.5rem;transform:translateX(-50%);padding:.5rem .8rem;border:1px solid #d9e1e8;border-radius:999px;background:#fffffff0;color:#607387;font:500 .62rem DM Mono;box-shadow:0 5px 18px #203b5618}
-.track-heading{gap:.6rem}.track-heading b{margin-left:auto}
-.track-toggle{width:25px;height:25px;padding:0;border-radius:6px;background:#fff;border-color:#d5dee6;color:#526a80;box-shadow:none;font-size:1rem;line-height:1}
-.track-toggle:hover:not(:disabled){background:#eef4f8;color:#176ca7;transform:none}
-.exploration-track.minimized{width:230px;padding:.55rem .65rem}
-.exploration-track.minimized .track-heading{margin:0}
-.exploration-track.minimized .track-heading b{display:none}
+.graph-stage:fullscreen,
+.graph-stage.is-fullscreen {
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  border-radius: 0;
+  background: #fff;
+}
+.graph-stage:fullscreen .graph-controls,
+.graph-stage.is-fullscreen .graph-controls {
+  right: 1.5rem;
+  top: 1.5rem;
+}
+.graph-stage:fullscreen .graph-legend,
+.graph-stage.is-fullscreen .graph-legend {
+  left: 1.5rem;
+  top: 1.5rem;
+}
+.fullscreen-label {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%);
+  padding: 0.5rem 0.8rem;
+  border: 1px solid #d9e1e8;
+  border-radius: 999px;
+  background: #fffffff0;
+  color: #607387;
+  font: 500 0.62rem DM Mono;
+  box-shadow: 0 5px 18px #203b5618;
+}
+.track-heading {
+  gap: 0.6rem;
+}
+.track-heading b {
+  margin-left: auto;
+}
+.track-toggle {
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  border-radius: 6px;
+  background: #fff;
+  border-color: #d5dee6;
+  color: #526a80;
+  box-shadow: none;
+  font-size: 1rem;
+  line-height: 1;
+}
+.track-toggle:hover:not(:disabled) {
+  background: #eef4f8;
+  color: #176ca7;
+  transform: none;
+}
+.exploration-track.minimized {
+  width: 230px;
+  padding: 0.55rem 0.65rem;
+}
+.exploration-track.minimized .track-heading {
+  margin: 0;
+}
+.exploration-track.minimized .track-heading b {
+  display: none;
+}

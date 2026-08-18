@@ -1,4 +1,7 @@
-type AdkEvent = { content?: { parts?: Array<{ text?: string }> }; errorMessage?: string };
+type AdkEvent = {
+  content?: { parts?: Array<{ text?: string }> };
+  errorMessage?: string;
+};
 
 export async function* streamAdkText(events: AsyncIterable<AdkEvent>) {
   let emitted = false;
@@ -11,5 +14,8 @@ export async function* streamAdkText(events: AsyncIterable<AdkEvent>) {
       }
     }
   }
-  if (!emitted) throw new Error('ADK model returned no text. Verify Gemini API credentials, quota, and safety settings.');
+  if (!emitted)
+    throw new Error(
+      "ADK model returned no text. Verify Gemini API credentials, quota, and safety settings.",
+    );
 }
