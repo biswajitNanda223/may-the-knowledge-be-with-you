@@ -2,7 +2,8 @@
 FROM node:22-bookworm-slim AS build
 
 WORKDIR /app
-ENV CI=true
+ENV CI=true \
+    HUSKY=0
 
 COPY package.json package-lock.json .npmrc tsconfig.base.json ./
 COPY apps/api/package.json apps/api/package.json
